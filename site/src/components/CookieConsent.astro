@@ -1,0 +1,166 @@
+---
+// Cookie banner and preferences (vanilla-cookieconsent, MIT) with Google Analytics 4.
+// GA is not loaded at all until the visitor accepts the "analytics" category (GDPR / Garante privacy prior consent).
+// Any element with data-cc="show-preferencesModal" reopens the preferences.
+import 'vanilla-cookieconsent/dist/cookieconsent.css';
+import { analytics, url } from '../site';
+import { localePath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const policyUrl = url(localePath(lang, '/cookies'));
+---
+<div hidden data-cookie-config data-lang={lang} data-ga-id={analytics.gaId} data-policy-url={policyUrl}></div>
+
+<script>
+  import * as CookieConsent from 'vanilla-cookieconsent';
+
+  type GtagWindow = Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void } & Record<string, unknown>;
+
+  const config = document.querySelector<HTMLElement>('[data-cookie-config]');
+  const lang = config?.dataset.lang === 'it' ? 'it' : 'en';
+  const gaId = config?.dataset.gaId ?? '';
+  const policyUrl = config?.dataset.policyUrl ?? '/cookies';
+  const w = window as GtagWindow;
+  let gaLoaded = false;
+
+  function loadAnalytics() {
+    if (!gaId || gaLoaded) return;
+    gaLoaded = true;
+    w[`ga-disable-${gaId}`] = false;
+    w.dataLayer = w.dataLayer ?? [];
+    w.gtag = function gtag() {
+      // gtag.js expects the Arguments object, not an array.
+      // eslint-disable-next-line prefer-rest-params
+      w.dataLayer!.push(arguments);
+    };
+    w.gtag('consent', 'default', {
+      analytics_storage: 'granted',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+    });
+    w.gtag('js', new Date());
+    w.gtag('config', gaId, { allow_google_signals: false, allow_ad_personalization_signals: false });
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`;
+    document.head.appendChild(script);
+  }
+
+  function stopAnalytics() {
+    if (!gaId) return;
+    w[`ga-disable-${gaId}`] = true;
+    // The library deletes the _ga cookies (autoClear); a reload unloads gtag.js already running on the page.
+    if (gaLoaded) window.location.reload();
+  }
+
+  const policyLink = (label: string) => `<a href="${policyUrl}">${label}</a>`;
+
+  CookieConsent.run({
+    revision: 1,
+    cookie: { name: 'talk2tia_consent', expiresAfterDays: 182 },
+    guiOptions: {
+      consentModal: { layout: 'box', position: 'bottom left', equalWeightButtons: true, flipButtons: false },
+      preferencesModal: { layout: 'box', equalWeightButtons: true, flipButtons: false },
+    },
+    categories: {
+      necessary: { enabled: true, readOnly: true },
+      analytics: {
+        autoClear: { cookies: [{ name: /^_ga/ }, { name: '_gid' }] },
+      },
+    },
+    onConsent: () => {
+      if (CookieConsent.acceptedCategory('analytics')) loadAnalytics();
+    },
+    onChange: ({ changedCategories }) => {
+      if (!changedCategories.includes('analytics')) return;
+      if (CookieConsent.acceptedCategory('analytics')) loadAnalytics();
+      else stopAnalytics();
+    },
+    language: {
+      default: lang,
+      translations: {
+        en: {
+          consentModal: {
+            title: 'We use cookies',
+            description: `This site uses technical cookies that are needed for it to work. With your consent we also use Google Analytics cookies to measure visits anonymously and improve the site. You can change your choice at any time from “Cookie preferences” at the bottom of every page. ${policyLink('Cookie policy')}`,
+            acceptAllBtn: 'Accept all',
+            acceptNecessaryBtn: 'Reject all',
+            showPreferencesBtn: 'Manage preferences',
+          },
+          preferencesModal: {
+            title: 'Cookie preferences',
+            acceptAllBtn: 'Accept all',
+            acceptNecessaryBtn: 'Reject all',
+            savePreferencesBtn: 'Save preferences',
+            closeIconLabel: 'Close',
+            sections: [
+              {
+                description: `Choose which cookies you allow. Rejecting analytics cookies does not limit any feature of the site. ${policyLink('Read the cookie policy')}.`,
+              },
+              {
+                title: 'Strictly necessary',
+                description: 'Remember your cookie choice (the theme preference stays in your browser’s local storage). They cannot be disabled.',
+                linkedCategory: 'necessary',
+              },
+              {
+                title: 'Analytics (Google Analytics 4)',
+                description: 'Aggregated statistics on visits (pages viewed, approximate country, device type). No advertising or profiling; Google signals are disabled.',
+                linkedCategory: 'analytics',
+                cookieTable: {
+                  headers: { name: 'Cookie', domain: 'Provider', duration: 'Duration', desc: 'Purpose' },
+                  body: [
+                    { name: '_ga', domain: 'Google', duration: '2 years', desc: 'Distinguishes visitors' },
+                    { name: '_ga_*', domain: 'Google', duration: '2 years', desc: 'Keeps the session state' },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        it: {
+          consentModal: {
+            title: 'Usiamo i cookie',
+            description: `Questo sito usa cookie tecnici necessari al suo funzionamento. Con il tuo consenso usiamo anche i cookie di Google Analytics per misurare le visite in forma aggregata e migliorare il sito. Puoi cambiare scelta in qualsiasi momento da “Preferenze cookie” in fondo a ogni pagina. ${policyLink('Cookie policy')}`,
+            acceptAllBtn: 'Accetta tutti',
+            acceptNecessaryBtn: 'Rifiuta tutti',
+            showPreferencesBtn: 'Gestisci preferenze',
+          },
+          preferencesModal: {
+            title: 'Preferenze cookie',
+            acceptAllBtn: 'Accetta tutti',
+            acceptNecessaryBtn: 'Rifiuta tutti',
+            savePreferencesBtn: 'Salva preferenze',
+            closeIconLabel: 'Chiudi',
+            sections: [
+              {
+                description: `Scegli quali cookie consentire. Rifiutare i cookie analitici non limita alcuna funzione del sito. ${policyLink('Leggi la cookie policy')}.`,
+              },
+              {
+                title: 'Strettamente necessari',
+                description: 'Ricordano la tua scelta sui cookie (il tema preferito resta nella memoria locale del browser). Non possono essere disattivati.',
+                linkedCategory: 'necessary',
+              },
+              {
+                title: 'Statistici (Google Analytics 4)',
+                description: 'Statistiche aggregate sulle visite (pagine viste, paese approssimativo, tipo di dispositivo). Nessuna pubblicità o profilazione; i Google signals sono disattivati.',
+                linkedCategory: 'analytics',
+                cookieTable: {
+                  headers: { name: 'Cookie', domain: 'Fornitore', duration: 'Durata', desc: 'Finalità' },
+                  body: [
+                    { name: '_ga', domain: 'Google', duration: '2 anni', desc: 'Distingue i visitatori' },
+                    { name: '_ga_*', domain: 'Google', duration: '2 anni', desc: 'Mantiene lo stato della sessione' },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  });
+</script>

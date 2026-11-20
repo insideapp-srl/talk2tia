@@ -20,3 +20,8 @@ export const stats = {
   tools: 107,
   toolsets: 7,
 };
+
+/** Google Analytics 4 measurement ID. Loaded only after the visitor accepts analytics cookies. */
+export const analytics = {
+  gaId: 'G-C07F2K0QVH',
+};

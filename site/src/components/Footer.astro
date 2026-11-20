@@ -37,6 +37,8 @@ const year = new Date().getFullYear();
           <li><a href={links.repo}>GitHub</a></li>
           <li><a href={links.issues}>{d.footer.issue}</a></li>
           <li><a href={url(localePath(lang, '/legal'))}>{d.footer.legalLink}</a></li>
+          <li><a href={url(localePath(lang, '/cookies'))}>{d.footer.cookieLink}</a></li>
+          <li><button type="button" class="link-btn" data-cc="show-preferencesModal">{d.footer.cookiePrefs}</button></li>
         </ul>
       </div>
       <div>

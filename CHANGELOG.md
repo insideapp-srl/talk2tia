@@ -14,6 +14,8 @@ Versions `0.x` are public betas.
   navbar and footer links on the website, badge in the README.
 - Website scroll animations: fade-up reveals, animated chat demo, count-up statistics, ambient motion
   (disabled with *reduce motion*).
+- Website cookie consent banner (vanilla-cookieconsent) with accept/reject/per-category choices, a cookie policy page
+  in English and Italian and a "Cookie preferences" footer link. Google Analytics 4 is loaded only after consent.
 
 ### Fixed
 
