@@ -6,6 +6,7 @@ import sitemap from '@astrojs/sitemap';
 const site = process.env.SITE_URL ?? 'http://localhost:4321';
 const base = process.env.SITE_BASE ?? '/';
 
+
 export default defineConfig({
   site,
   base,
@@ -17,6 +18,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
+      filter: (page) => !page.includes('/404'),
       i18n: { defaultLocale: 'en', locales: { en: 'en-US', it: 'it-IT' } },
     }),
   ],

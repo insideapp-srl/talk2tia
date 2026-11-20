@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1424"/>
+      <stop offset="1" stop-color="#162244"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#335EEA"/>
+      <stop offset="1" stop-color="#46CDCF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+      <stop offset="0" stop-color="#46CDCF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#46CDCF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Brand mark -->
+  <g transform="translate(80 86) scale(2.2)">
+    <path fill="url(#brand)" d="M10 4h28a8 8 0 0 1 8 8v18a8 8 0 0 1-8 8H22l-9.2 7.4c-.9.7-2.3.1-2.3-1.1V38H10a8 8 0 0 1-8-8V12a8 8 0 0 1 8-8z"/>
+    <g stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M13 13v16M35 13v16"/>
+      <path d="M13 21h6M29 21h6"/>
+      <path d="M21 16v10M27 16v10"/>
+    </g>
+  </g>
+  <text x="200" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700" fill="#f4f7fc">Talk<tspan fill="#46CDCF">2</tspan>Tia</text>
+
+  <text x="80" y="290" font-family="Segoe UI, Arial, sans-serif" font-size="68" font-weight="700" fill="#f4f7fc">Talk to TIA Portal V21</text>
+  <text x="80" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="68" font-weight="700" fill="url(#brand)">with your AI assistant</text>
+
+  <text x="80" y="450" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#b3c2da">Open-source MCP server for Siemens TIA Portal Openness:</text>
+  <text x="80" y="492" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#b3c2da">SCL and LAD blocks, libraries, tags, compile and download.</text>
+
+  <!-- Chips -->
+  <g font-family="Consolas, monospace" font-size="24" fill="#9fb5f7">
+    <rect x="80" y="536" width="170" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="165" y="568" text-anchor="middle">107 tools</text>
+    <rect x="266" y="536" width="150" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="341" y="568" text-anchor="middle">SCL · LAD</text>
+    <rect x="432" y="536" width="150" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="507" y="568" text-anchor="middle">MIT · free</text>
+  </g>
+  <text x="1120" y="568" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#8496b4">talk2tia.insideapp.it</text>
+</svg>

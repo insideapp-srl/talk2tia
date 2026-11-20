@@ -1,11 +1,22 @@
 ---
+// Self-hosted fonts (no request to Google Fonts): latin and latin-ext subsets only.
+import '@fontsource/hanken-grotesk/latin-300.css';
+import '@fontsource/hanken-grotesk/latin-400.css';
+import '@fontsource/hanken-grotesk/latin-500.css';
+import '@fontsource/hanken-grotesk/latin-600.css';
+import '@fontsource/hanken-grotesk/latin-700.css';
+import '@fontsource/hanken-grotesk/latin-ext-400.css';
+import '@fontsource/hanken-grotesk/latin-ext-700.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-600.css';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import BetaBanner from '../components/BetaBanner.astro';
 import Motion from '../components/Motion.astro';
 import CookieConsent from '../components/CookieConsent.astro';
-import { url } from '../site';
+import { links, url } from '../site';
+import { version } from '../../package.json';
 import { localePath, pathWithoutLocale, t, type Lang } from '../i18n';
 
 interface Props {
@@ -21,6 +32,48 @@ const description = Astro.props.description ?? dict.meta.description;
 const basePath = pathWithoutLocale(Astro.url.pathname, import.meta.env.BASE_URL);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const alternates = (['en', 'it'] as const).map((l) => ({ lang: l, href: new URL(url(localePath(l, basePath)), Astro.site) }));
+const ogImage = new URL(url('/og-image.png'), Astro.site);
+const home = new URL(url('/'), Astro.site).href;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.insideapp.it/#organization',
+      name: 'InsideApp S.r.l.',
+      url: links.insideapp,
+      vatID: 'IT12703330014',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${home}#website`,
+      url: home,
+      name: 'Talk2Tia',
+      inLanguage: ['en', 'it'],
+      publisher: { '@id': 'https://www.insideapp.it/#organization' },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      '@id': `${home}#software`,
+      name: 'Talk2Tia',
+      description: dict.meta.description,
+      url: home,
+      image: ogImage.href,
+      applicationCategory: 'DeveloperApplication',
+      applicationSubCategory: 'Industrial automation',
+      operatingSystem: 'Windows 10, Windows 11',
+      softwareVersion: version,
+      softwareRequirements: 'Siemens TIA Portal V21 with TIA Portal Openness',
+      license: 'https://opensource.org/licenses/MIT',
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+      downloadUrl: links.download,
+      codeRepository: links.repo,
+      author: { '@id': 'https://www.insideapp.it/#organization' },
+      publisher: { '@id': 'https://www.insideapp.it/#organization' },
+    },
+  ],
+};
 ---
 <!doctype html>
 <html lang={lang} data-theme="dark">
@@ -37,7 +90,22 @@ const alternates = (['en', 'it'] as const).map((l) => ({ lang: l, href: new URL(
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content={lang === 'it' ? 'it_IT' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'it' ? 'en_US' : 'it_IT'} />
+    <meta property="og:site_name" content="Talk2Tia" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={dict.meta.imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={dict.meta.imageAlt} />
+    <meta name="author" content="InsideApp S.r.l." />
     <meta name="theme-color" content="#0e1424" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <script is:inline>
       // Apply the saved theme before first paint (dark is the default).
       (function () {
@@ -52,12 +120,6 @@ const alternates = (['en', 'it'] as const).map((l) => ({ lang: l, href: new URL(
         document.documentElement.classList.add('js');
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
-    />
   </head>
   <body>
     <a class="sr-skip" href="#main">{dict.nav.skip}</a>

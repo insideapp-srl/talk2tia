@@ -16,16 +16,21 @@ Versions `0.x` are public betas.
   (disabled with *reduce motion*).
 - Website cookie consent banner (vanilla-cookieconsent) with accept/reject/per-category choices, a cookie policy page
   in English and Italian and a "Cookie preferences" footer link. Google Analytics 4 is loaded only after consent.
+- Website SEO: `robots.txt`, social preview image with Open Graph and Twitter card tags, schema.org structured data
+  (`SoftwareApplication`, `Organization`, `WebSite`), keyword-focused titles and descriptions.
+
+### Changed
+
+- Website fonts are self-hosted instead of loaded from Google Fonts (faster first paint, no visitor IP sent to Google).
+- Each website page has a single `<h1>`; the 404 page is excluded from the sitemap.
+
+- Simplified the branching model to GitHub flow: work happens on feature branches merged into `main`, releases
+  are `vX.Y.Z` tags. CI runs on `main` and on pull requests.
 
 ### Fixed
 
 - Website and README download links now open the releases page: `/releases/latest` ignores pre-releases and
   returned a 404 while only beta releases exist.
-
-### Changed
-
-- Simplified the branching model to GitHub flow: work happens on feature branches merged into `main`, releases
-  are `vX.Y.Z` tags. CI runs on `main` and on pull requests.
 
 ## [0.9.0] - 2026-11-20
 

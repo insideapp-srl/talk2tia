@@ -26,9 +26,10 @@ const en = {
     link: 'Send feedback',
   },
   meta: {
-    title: 'Talk2Tia — Talk to TIA Portal',
+    title: 'Talk2Tia — AI MCP server for Siemens TIA Portal V21',
     description:
-      'MCP server for Siemens TIA Portal V21: your AI assistant reads and writes SCL and LAD blocks, manages libraries, compiles and downloads through Openness.',
+      'Open-source MCP server for Siemens TIA Portal V21: Claude and other AI assistants edit SCL and LAD blocks, libraries and tags, compile and download via Openness.',
+    imageAlt: 'Talk2Tia — Talk to TIA Portal V21 with your AI assistant',
   },
   nav: {
     features: 'Features',
@@ -163,14 +164,14 @@ const en = {
   },
   docs: {
     title: 'Documentation — Talk2Tia',
-    description: 'Installation, MCP client configuration and first steps with Talk2Tia.',
+    description: 'Install Talk2Tia, connect Claude or another MCP client to Siemens TIA Portal V21 and edit SCL and LAD code with AI.',
     badge: 'Documentation',
     heading: 'Getting started',
     lead: 'Requirements, installation, MCP client configuration and how code editing works.',
   },
   tools: {
     title: 'Tool catalog — Talk2Tia',
-    description: `The ${stats.tools} Talk2Tia MCP tools for TIA Portal V21, grouped by toolset.`,
+    description: `All ${stats.tools} Talk2Tia MCP tools for Siemens TIA Portal V21 Openness: projects, hardware, PLC blocks, tags, libraries, online and HMI.`,
     badge: 'Catalog',
     heading: `${stats.tools} tools, ${stats.toolsets} toolsets`,
     lead: 'The catalog is generated from the source code: names and descriptions are exactly what your AI assistant sees.',
@@ -206,9 +207,10 @@ const it: Dict = {
     link: 'Invia un feedback',
   },
   meta: {
-    title: 'Talk2Tia — Parla con TIA Portal',
+    title: 'Talk2Tia — Server MCP AI per Siemens TIA Portal V21',
     description:
-      'Server MCP per Siemens TIA Portal V21: il tuo assistente AI legge e scrive blocchi SCL e KOP, gestisce librerie, compila e scarica, tramite Openness.',
+      'Server MCP open source per Siemens TIA Portal V21: Claude e altri assistenti AI modificano blocchi SCL e KOP, librerie e tag, compilano e scaricano via Openness.',
+    imageAlt: 'Talk2Tia — Parla con TIA Portal V21 tramite il tuo assistente AI',
   },
   nav: {
     features: 'Funzionalità',
@@ -343,14 +345,14 @@ const it: Dict = {
   },
   docs: {
     title: 'Documentazione — Talk2Tia',
-    description: 'Installazione, configurazione dei client MCP e primo utilizzo di Talk2Tia.',
+    description: 'Installa Talk2Tia, collega Claude o un altro client MCP a Siemens TIA Portal V21 e modifica codice SCL e KOP con l’AI.',
     badge: 'Documentazione',
     heading: 'Per iniziare',
     lead: 'Requisiti, installazione, configurazione dei client MCP e funzionamento della modifica del codice.',
   },
   tools: {
     title: 'Catalogo tool — Talk2Tia',
-    description: `I ${stats.tools} tool MCP di Talk2Tia per TIA Portal V21, divisi per gruppo.`,
+    description: `Tutti i ${stats.tools} tool MCP di Talk2Tia per Siemens TIA Portal V21 Openness: progetti, hardware, blocchi PLC, tag, librerie, online e HMI.`,
     badge: 'Catalogo',
     heading: `${stats.tools} tool, ${stats.toolsets} gruppi`,
     lead: 'Il catalogo è generato dal codice sorgente: nomi e descrizioni (in inglese) sono quelli che vede il tuo assistente AI.',
