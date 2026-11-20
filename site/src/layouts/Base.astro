@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import BetaBanner from '../components/BetaBanner.astro';
 import Motion from '../components/Motion.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 import { url } from '../site';
 import { localePath, pathWithoutLocale, t, type Lang } from '../i18n';
 
@@ -67,5 +68,6 @@ const alternates = (['en', 'it'] as const).map((l) => ({ lang: l, href: new URL(
     </main>
     <Footer lang={lang} />
     <Motion />
+    <CookieConsent lang={lang} />
   </body>
 </html>
