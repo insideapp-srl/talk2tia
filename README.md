@@ -19,7 +19,7 @@
   <a href="https://talk2tia.insideapp.it">Website</a> ·
   <a href="https://talk2tia.insideapp.it/docs">Documentation</a> ·
   <a href="https://talk2tia.insideapp.it/tools">Tool catalog</a> ·
-  <a href="https://github.com/insideapp-srl/talk2tia/releases/latest">Download</a>
+  <a href="https://github.com/insideapp-srl/talk2tia/releases">Download</a>
 </p>
 
 > [!WARNING]
