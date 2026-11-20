@@ -1,5 +1,3 @@
-# Cookie policy
-
 *Ultimo aggiornamento: 20 novembre 2026*
 
 La presente cookie policy descrive come **talk2tia.insideapp.it** (il "Sito") utilizza cookie e tecnologie simili, ai
@@ -42,8 +40,8 @@ Maggiori informazioni: [privacy policy di Google](https://policies.google.com/pr
 
 ### Risorse di terze parti
 
-Il Sito carica i caratteri da Google Fonts: il browser contatta i server di Google per scaricarli, senza che vengano
-impostati cookie. I link a GitHub e Ko-fi portano a siti con una propria cookie policy.
+I caratteri e tutte le altre risorse sono serviti direttamente dal Sito. I link a GitHub e Ko-fi portano a siti con una
+propria cookie policy.
 
 ## Gestione del consenso
 

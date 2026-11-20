@@ -1,5 +1,3 @@
-# Talk2Tia — Per iniziare
-
 > **Beta pubblica (v0.9).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
 > prima di salvare o scaricare, e segnala i problemi su [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 

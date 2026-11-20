@@ -1,5 +1,3 @@
-# Note legali
-
 ## 1. Esclusione di garanzia
 
 Talk2Tia (il "Software") è fornito da InsideApp S.r.l. ("InsideApp") "COSÌ COM'È" e "COME DISPONIBILE", senza garanzie

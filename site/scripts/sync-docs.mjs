@@ -1,5 +1,6 @@
 // Copies the repository documentation (../docs/*.md) into the site so pages render the same source of truth.
-import { copyFile, mkdir, readdir } from 'node:fs/promises';
+// The leading "# Title" is dropped: the page hero already renders the page <h1>.
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,6 +15,7 @@ if (files.length === 0) {
 }
 
 for (const file of files) {
-  await copyFile(join(source, file), join(target, file));
+  const text = await readFile(join(source, file), 'utf8');
+  await writeFile(join(target, file), text.replace(/^\uFEFF?# [^\r\n]*(\r?\n)+/, ''));
 }
 process.stdout.write(`sync-docs: copied ${files.length} file(s) from docs/\n`);

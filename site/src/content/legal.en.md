@@ -1,5 +1,3 @@
-# Legal notice
-
 ## 1. Disclaimer of warranty
 
 Talk2Tia (the "Software") is provided by InsideApp S.r.l. ("InsideApp") "AS IS" and "AS AVAILABLE", without warranty
