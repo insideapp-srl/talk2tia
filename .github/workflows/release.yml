@@ -26,19 +26,23 @@ jobs:
     name: Build, sign & publish installers
     runs-on: [self-hosted, windows, x64, tia-v21]
     timeout-minutes: 45
+    defaults:
+      run:
+        shell: powershell
     env:
       # Public thumbprint of the InsideApp code-signing certificate; override with the repository variable.
       SIGNING_CERT_SHA1: ${{ vars.SIGNING_CERT_SHA1 || '53D5FBADE305B0A3A7FB4D74CBBFCFCDC2735676' }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
+      # The self-hosted runner already has the .NET 8 SDK (setup-dotnet cannot install without admin rights).
+      - name: Check .NET SDK
+        shell: powershell
+        run: dotnet --list-sdks
 
       - name: Resolve version
         id: version
-        shell: pwsh
+        shell: powershell
         run: |
           $v = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ inputs.version }}" } else { "${{ github.ref_name }}".TrimStart('v') }
           if ($v -notmatch '^\d+\.\d+\.\d+$') { throw "Invalid version '$v'" }
@@ -47,7 +51,7 @@ jobs:
       # Fail fast, before building, when SimplySign is not logged in on the runner.
       - name: Check signing certificate
         id: signing
-        shell: pwsh
+        shell: powershell
         run: |
           try {
             ./build/sign.ps1 -Check
@@ -71,7 +75,7 @@ jobs:
 
       - name: Sign binaries
         if: steps.signing.outputs.enabled == 'true'
-        shell: pwsh
+        shell: powershell
         run: ./build/sign.ps1 -Path artifacts/publish/talk2tia.exe, artifacts/publish/Talk2Tia.Core.dll
 
       - name: Build MSI
@@ -79,11 +83,11 @@ jobs:
 
       - name: Sign MSI
         if: steps.signing.outputs.enabled == 'true'
-        shell: pwsh
+        shell: powershell
         run: ./build/sign.ps1 -Path installer/bin/x64/Release/Talk2Tia-${{ steps.version.outputs.value }}-x64.msi -Description "Talk2Tia Setup"
 
       - name: Package
-        shell: pwsh
+        shell: powershell
         run: |
           $v = "${{ steps.version.outputs.value }}"
           New-Item -ItemType Directory -Force dist | Out-Null
