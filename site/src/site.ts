@@ -2,7 +2,8 @@
 export const links = {
   repo: 'https://github.com/insideapp-srl/talk2tia',
   releases: 'https://github.com/insideapp-srl/talk2tia/releases',
-  download: 'https://github.com/insideapp-srl/talk2tia/releases/latest',
+  // Not /releases/latest: GitHub excludes pre-releases (all 0.x betas) from it.
+  download: 'https://github.com/insideapp-srl/talk2tia/releases',
   issues: 'https://github.com/insideapp-srl/talk2tia/issues',
   insideapp: 'https://www.insideapp.it',
   contact: 'https://www.insideapp.it/contact.html',
