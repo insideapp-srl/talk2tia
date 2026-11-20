@@ -5,12 +5,18 @@
     "description": "MCP server for Siemens TIA Portal V21 through the Openness API"
   },
   "git": {
-    "baseBranch": "pre-release",
-    "protectedBranches": ["main", "pre-release"]
+    "baseBranch": "main",
+    "protectedBranches": [
+      "main"
+    ],
+    "releases": "semver tags vX.Y.Z on main (0.x = public beta, published as GitHub pre-releases)"
   },
   "stack": {
     "language": "C#",
     "framework": ".NET Framework 4.8",
-    "requires": ["TIA Portal V21 with Openness", "Windows x64"]
+    "requires": [
+      "TIA Portal V21 with Openness",
+      "Windows x64"
+    ]
   }
 }
