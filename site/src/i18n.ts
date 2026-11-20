@@ -133,6 +133,15 @@ const en = {
       { q: 'Who is responsible for what Talk2Tia does?', a: 'You are. Talk2Tia is provided “as is”, without warranty of any kind. InsideApp S.r.l. accepts no liability for any damage, loss of data, production downtime, injury or other consequence arising from its use, including changes made by AI assistants to projects, PLC programs or plants. Every change must be reviewed, tested and approved by qualified personnel before it reaches a real machine. See the legal notice for the full terms.' },
     ],
   },
+  support: {
+    badge: 'Support',
+    title: 'Keep Talk2Tia free and open',
+    lead: 'Talk2Tia is free and open source. If it saves you time on your projects, you can support its development: every contribution helps us test on more PLCs and TIA Portal versions, add tools and keep releases signed.',
+    button: 'Support on Ko-fi',
+    star: 'Star on GitHub',
+    nav: 'Support Talk2Tia on Ko-fi',
+    footer: 'Support us on Ko-fi',
+  },
   cta: {
     title: 'Bringing AI to your automation team?',
     lead: 'InsideApp builds software for industry. Let’s talk about adapting Talk2Tia to your standards and libraries.',
@@ -294,6 +303,15 @@ const it: Dict = {
       { q: 'Posso limitare i tool disponibili?', a: 'Sì, con la variabile TALK2TIA_TOOLSETS (ad esempio “plc,library”). Meno tool significa meno contesto per il modello e risposte più mirate.' },
       { q: 'Chi è responsabile di ciò che fa Talk2Tia?', a: 'Tu. Talk2Tia è fornito “così com’è”, senza garanzie di alcun tipo. InsideApp S.r.l. non risponde di danni, perdite di dati, fermi produttivi, lesioni o altre conseguenze derivanti dal suo utilizzo, comprese le modifiche apportate da assistenti AI a progetti, programmi PLC o impianti. Ogni modifica deve essere verificata, collaudata e approvata da personale qualificato prima di arrivare su una macchina reale. I termini completi sono nelle note legali.' },
     ],
+  },
+  support: {
+    badge: 'Sostienici',
+    title: 'Aiutaci a mantenere Talk2Tia libero',
+    lead: 'Talk2Tia è gratuito e open source. Se ti fa risparmiare tempo sui tuoi progetti, puoi sostenerne lo sviluppo: ogni contributo ci aiuta a testarlo su più PLC e versioni di TIA Portal, aggiungere tool e mantenere le release firmate.',
+    button: 'Sostienici su Ko-fi',
+    star: 'Una stella su GitHub',
+    nav: 'Sostieni Talk2Tia su Ko-fi',
+    footer: 'Sostienici su Ko-fi',
   },
   cta: {
     title: "Vuoi portare l'AI nel tuo reparto automazione?",

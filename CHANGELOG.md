@@ -8,6 +8,13 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+### Added
+
+- Support the project on Ko-fi: `Sponsor` button on the repository (`.github/FUNDING.yml`), support section,
+  navbar and footer links on the website, badge in the README.
+- Website scroll animations: fade-up reveals, animated chat demo, count-up statistics, ambient motion
+  (disabled with *reduce motion*).
+
 ### Fixed
 
 - Website and README download links now open the releases page: `/releases/latest` ignores pre-releases and
