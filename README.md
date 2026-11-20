@@ -13,6 +13,7 @@
   <img alt="Version 0.9.0" src="https://img.shields.io/badge/version-0.9.0-335eea" />
   <img alt="TIA Portal V21" src="https://img.shields.io/badge/TIA%20Portal-V21-1b2a4e" />
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-42ba96" />
+  <a href="https://ko-fi.com/insideappsrl"><img alt="Support on Ko-fi" src="https://img.shields.io/badge/support-Ko--fi-ff5e5b?logo=kofi&logoColor=white" /></a>
 </p>
 
 <p align="center">
@@ -90,6 +91,12 @@ dotnet build installer -c Release
 ```
 
 Releases are built on a self-hosted runner with TIA Portal and signed with the InsideApp code-signing certificate.
+
+## Support the project
+
+Talk2Tia is free and open source. If it saves you time, you can support its development on
+[Ko-fi](https://ko-fi.com/insideappsrl) — it helps us test on more PLCs and TIA Portal versions, add tools and
+keep releases signed. A ⭐ on GitHub helps too!
 
 ## License and disclaimer
 
