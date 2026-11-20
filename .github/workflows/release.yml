@@ -1,0 +1,103 @@
+name: Release
+
+# Push a tag like v0.1.0 to build, test, sign and publish the installers.
+#
+# Signing uses the InsideApp Certum certificate in Certum's cloud HSM (SimplySign).
+# Before pushing the tag, log in to SimplySign Desktop on the self-hosted runner (e-mail + OTP
+# from the SimplySign mobile app). No signing secret is stored on GitHub.
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version without the leading v (e.g. 0.1.0)
+        required: true
+      allow_unsigned:
+        description: Publish unsigned binaries if the certificate is unavailable (test releases only)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, sign & publish installers
+    runs-on: [self-hosted, windows, x64, tia-v21]
+    timeout-minutes: 45
+    env:
+      # Public thumbprint of the InsideApp code-signing certificate; override with the repository variable.
+      SIGNING_CERT_SHA1: ${{ vars.SIGNING_CERT_SHA1 || '53D5FBADE305B0A3A7FB4D74CBBFCFCDC2735676' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          $v = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ inputs.version }}" } else { "${{ github.ref_name }}".TrimStart('v') }
+          if ($v -notmatch '^\d+\.\d+\.\d+$') { throw "Invalid version '$v'" }
+          "value=$v" >> $env:GITHUB_OUTPUT
+
+      # Fail fast, before building, when SimplySign is not logged in on the runner.
+      - name: Check signing certificate
+        id: signing
+        shell: pwsh
+        run: |
+          try {
+            ./build/sign.ps1 -Check
+            "enabled=true" >> $env:GITHUB_OUTPUT
+          }
+          catch {
+            if ("${{ inputs.allow_unsigned }}" -eq "true") {
+              Write-Warning "Signing unavailable, continuing UNSIGNED: $($_.Exception.Message)"
+              "enabled=false" >> $env:GITHUB_OUTPUT
+            }
+            else {
+              throw
+            }
+          }
+
+      - name: Test
+        run: dotnet test Talk2Tia.sln -c Release -nologo -p:Version=${{ steps.version.outputs.value }}
+
+      - name: Publish
+        run: dotnet publish src/Talk2Tia.Server -c Release -o artifacts/publish -nologo -p:Version=${{ steps.version.outputs.value }}
+
+      - name: Sign binaries
+        if: steps.signing.outputs.enabled == 'true'
+        shell: pwsh
+        run: ./build/sign.ps1 -Path artifacts/publish/talk2tia.exe, artifacts/publish/Talk2Tia.Core.dll
+
+      - name: Build MSI
+        run: dotnet build installer -c Release -nologo -p:Version=${{ steps.version.outputs.value }} -p:PublishDir=${{ github.workspace }}\artifacts\publish\
+
+      - name: Sign MSI
+        if: steps.signing.outputs.enabled == 'true'
+        shell: pwsh
+        run: ./build/sign.ps1 -Path installer/bin/x64/Release/Talk2Tia-${{ steps.version.outputs.value }}-x64.msi -Description "Talk2Tia Setup"
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $v = "${{ steps.version.outputs.value }}"
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item "installer/bin/x64/Release/Talk2Tia-$v-x64.msi" dist/
+          Get-ChildItem artifacts/publish -Exclude *.pdb | Compress-Archive -DestinationPath "dist/Talk2Tia-$v-x64-portable.zip"
+          Get-ChildItem dist | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
+            Set-Content dist/SHA256SUMS.txt -Encoding ascii
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.value }}
+          name: Talk2Tia ${{ steps.version.outputs.value }}
+          generate_release_notes: true
+          # 0.x versions are public betas; unsigned test builds are always pre-releases.
+          prerelease: ${{ steps.signing.outputs.enabled != 'true' || startsWith(steps.version.outputs.value, '0.') }}
+          files: dist/*

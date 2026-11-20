@@ -1,0 +1,83 @@
+---
+import Logo from './Logo.astro';
+import { links, url } from '../site';
+import { localePath, t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  basePath: string;
+}
+
+const { lang, basePath } = Astro.props;
+const d = t(lang).nav;
+const home = url(localePath(lang, '/'));
+const nav = [
+  { label: d.features, href: `${home.replace(/\/$/, '')}/#features` },
+  { label: d.how, href: `${home.replace(/\/$/, '')}/#how-it-works` },
+  { label: d.tools, href: url(localePath(lang, '/tools')), match: '/tools' },
+  { label: d.docs, href: url(localePath(lang, '/docs')), match: '/docs' },
+  { label: 'GitHub', href: links.repo },
+];
+const current = basePath.replace(/\/$/, '');
+---
+<header class="navbar">
+  <div class="container navbar-inner">
+    <a class="brand" href={home} aria-label="Talk2Tia home">
+      <Logo />
+      <span>Talk<span class="brand-two">2</span>Tia</span>
+    </a>
+
+    <ul class="nav-links">
+      {nav.map((item) => (
+        <li><a href={item.href} aria-current={item.match && current === item.match ? 'page' : undefined}>{item.label}</a></li>
+      ))}
+    </ul>
+
+    <nav class="lang-switch" aria-label={d.language}>
+      <a href={url(localePath('en', basePath))} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+      <a href={url(localePath('it', basePath))} hreflang="it" lang="it" aria-current={lang === 'it' ? 'true' : undefined}>IT</a>
+    </nav>
+
+    <button class="icon-btn theme-toggle" type="button" aria-label={d.theme} title={d.theme} data-theme-toggle>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" /></svg>
+    </button>
+
+    <a class="btn btn-primary btn-sm nav-cta" href={links.download}>{d.download}</a>
+
+    <button class="icon-btn nav-toggle" type="button" aria-expanded="false" aria-controls="nav-mobile" aria-label={d.menu} data-nav-toggle>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+    </button>
+  </div>
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menu">
+    {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    <a href={links.download}>{d.download}</a>
+  </nav>
+</header>
+
+<script>
+  const root = document.documentElement;
+
+  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('talk2tia-theme', next);
+    } catch {
+      // Storage unavailable (private mode): the choice simply is not remembered.
+    }
+  });
+
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const menu = document.getElementById('nav-mobile');
+  toggle?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('open') ?? false;
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  menu?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      menu.classList.remove('open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    }),
+  );
+</script>

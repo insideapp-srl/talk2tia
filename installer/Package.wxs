@@ -1,0 +1,42 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <!-- UpgradeCode must never change: it links every Talk2Tia version for major upgrades. -->
+  <Package Name="Talk2Tia"
+           Manufacturer="InsideApp S.r.l."
+           Version="$(Version)"
+           UpgradeCode="6f0e8a52-3c1b-4d7e-9a35-2b8c4e71d0a9"
+           Scope="perMachine"
+           Compressed="yes">
+
+    <SummaryInformation Description="Talk2Tia — MCP server for Siemens TIA Portal V21 (Openness)" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Talk2Tia is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Property Id="ARPHELPLINK" Value="https://github.com/insideapp-srl/talk2tia" />
+    <Property Id="ARPURLINFOABOUT" Value="https://talk2tia.insideapp.it" />
+    <Property Id="ARPCOMMENTS" Value="MCP server for Siemens TIA Portal V21 through the Openness API." />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Talk2Tia" />
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="Talk2Tia" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="PathEntry" />
+    </Feature>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <!-- Everything produced by `dotnet publish` (Siemens assemblies are never part of it). -->
+      <Files Include="$(PublishDir)**">
+        <Exclude Files="$(PublishDir)**\*.pdb" />
+      </Files>
+    </ComponentGroup>
+
+    <!-- Puts talk2tia.exe on the system PATH so MCP clients can launch it by name. -->
+    <Component Id="PathEntry" Directory="INSTALLFOLDER" Guid="b5d1f4a7-8c2e-4b9d-a613-7e0f2c94d5b8">
+      <Environment Id="Talk2TiaPath" Name="PATH" Value="[INSTALLFOLDER]" Action="set" Part="last" System="yes" Permanent="no" />
+    </Component>
+
+  </Package>
+</Wix>

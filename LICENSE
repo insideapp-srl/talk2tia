@@ -1,0 +1,55 @@
+MIT License
+
+Copyright (c) 2026 InsideApp S.r.l.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+ADDITIONAL NOTICE — INDUSTRIAL AUTOMATION AND LIMITATION OF LIABILITY
+
+This notice supplements, and does not restrict, the rights granted above.
+
+The Software enables artificial-intelligence assistants and other automated agents
+to read and modify engineering projects, PLC programs, hardware configurations and
+HMI data, and to download them to programmable controllers. Any change proposed or
+performed through the Software may be incorrect, incomplete or unsafe. The user is
+solely and fully responsible for reviewing, validating, testing and approving every
+change before it is saved, compiled, downloaded or put into operation, for compliance
+with all applicable safety standards and regulations, and for the safety of persons,
+machines and plants. The Software shall not be used as the sole means of ensuring
+safety, nor on safety-related programs or running production equipment without an
+appropriate risk assessment, authorization and supervision by qualified personnel.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL INSIDEAPP S.R.L.,
+ITS DIRECTORS, EMPLOYEES OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY OR CONSEQUENTIAL DAMAGES, INCLUDING WITHOUT LIMITATION
+LOSS OF PROFITS, PRODUCTION, DATA OR PROGRAMS, BUSINESS INTERRUPTION, PLANT OR MACHINE
+DOWNTIME, DAMAGE TO PROPERTY, PERSONAL INJURY OR DEATH, HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, ARISING IN ANY WAY OUT OF THE USE OF OR INABILITY TO USE THE
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. Nothing herein excludes
+liability that cannot be excluded under applicable law, including liability for
+wilful misconduct or gross negligence (Article 1229 of the Italian Civil Code).
+
+---
+
+Siemens, SIMATIC, STEP 7, WinCC and TIA Portal are trademarks of Siemens AG.
+Talk2Tia is not affiliated with or endorsed by Siemens AG. This software does not
+include or redistribute any Siemens component: it uses the TIA Portal Openness
+API installed with TIA Portal, which is subject to its own license.

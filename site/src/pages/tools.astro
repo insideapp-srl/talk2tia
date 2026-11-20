@@ -1,0 +1,9 @@
+---
+import DocPage from '../components/DocPage.astro';
+import { Content } from '../generated/tools.md';
+import { t } from '../i18n';
+const d = t('en').tools;
+---
+<DocPage lang="en" title={d.title} description={d.description} badge={d.badge} heading={d.heading} lead={d.lead} wide badgeTone="teal">
+  <Content />
+</DocPage>

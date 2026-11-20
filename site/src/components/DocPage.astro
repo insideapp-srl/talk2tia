@@ -1,0 +1,30 @@
+---
+// Generic documentation page: hero + rendered markdown content.
+import Base from '../layouts/Base.astro';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  badge: string;
+  heading: string;
+  lead: string;
+  wide?: boolean;
+  badgeTone?: 'primary' | 'teal';
+}
+
+const { lang, title, description, badge, heading, lead, wide = false, badgeTone = 'primary' } = Astro.props;
+---
+<Base lang={lang} title={title} description={description}>
+  <section class="doc-hero">
+    <div class="container narrow">
+      <span class={`badge badge-${badgeTone}`}>{badge}</span>
+      <h1 style="margin-top:1rem">{heading}</h1>
+      <p class="lead">{lead}</p>
+    </div>
+  </section>
+  <article class={wide ? 'container prose' : 'container narrow prose'} style={wide ? 'max-width:1000px' : undefined}>
+    <slot />
+  </article>
+</Base>

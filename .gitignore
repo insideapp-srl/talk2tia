@@ -1,0 +1,30 @@
+# Build output
+bin/
+obj/
+artifacts/
+publish/
+TestResults/
+*.binlog
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+.vscode/
+
+# Secrets and local configuration
+.env
+.env.*
+*.pfx
+*.p12
+*.snk
+appsettings.*.local.json
+
+# Siemens assemblies must never be committed or redistributed
+Siemens.Engineering*.dll
+
+# OS
+Thumbs.db
+.DS_Store

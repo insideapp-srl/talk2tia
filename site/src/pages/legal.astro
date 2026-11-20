@@ -1,0 +1,9 @@
+---
+import DocPage from '../components/DocPage.astro';
+import { Content } from '../content/legal.en.md';
+import { t } from '../i18n';
+const d = t('en').legal;
+---
+<DocPage lang="en" title={d.title} description={d.description} badge={d.badge} heading={d.heading} lead={d.lead}>
+  <Content />
+</DocPage>

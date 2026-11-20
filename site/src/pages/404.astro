@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../site';
+import { localePath, t } from '../i18n';
+const en = t('en').notFound;
+const it = t('it').notFound;
+---
+<Base lang="en" title={en.title}>
+  <section class="section-lg text-center">
+    <div class="container narrow">
+      <span class="badge badge-teal">404</span>
+      <h1 style="margin-top:1rem">{en.heading}</h1>
+      <p class="lead">{en.lead}</p>
+      <div class="btn-row center">
+        <a class="btn btn-primary" href={url(localePath('en', '/'))}>{en.home}</a>
+        <a class="btn btn-soft" href={url(localePath('it', '/'))} lang="it">{it.home}</a>
+      </div>
+    </div>
+  </section>
+</Base>

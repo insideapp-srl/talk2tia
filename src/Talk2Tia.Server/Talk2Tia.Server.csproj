@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>Talk2Tia.Server</RootNamespace>
+    <AssemblyName>talk2tia</AssemblyName>
+    <Product>Talk2Tia</Product>
+    <Company>InsideApp</Company>
+    <Copyright>Copyright (c) 2026 InsideApp S.r.l. MIT License.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>0.9.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Talk2Tia.Core\Talk2Tia.Core.csproj" />
+  </ItemGroup>
+
+</Project>
