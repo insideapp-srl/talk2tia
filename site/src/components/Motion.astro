@@ -5,7 +5,7 @@
 //   data-reveal-delay="150"     delay in ms
 //   data-count="107"            count up from 0 when visible
 //   data-sequence               children appear one after another (hero chat demo)
-// Everything is skipped with prefers-reduced-motion.
+// With prefers-reduced-motion only gentle fades remain: no movement, floating or pulsing.
 ---
 <script>
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -15,11 +15,7 @@
     const target = Number(el.dataset.count);
     const suffix = el.dataset.countSuffix ?? '';
     if (!Number.isFinite(target)) return;
-    if (reduced) {
-      el.textContent = `${target}${suffix}`;
-      return;
-    }
-    const duration = 1400;
+    const duration = reduced ? 600 : 1400;
     const start = performance.now();
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
@@ -34,10 +30,6 @@
     const items = Array.from(el.children) as HTMLElement[];
     const gap = Number(el.dataset.sequenceGap ?? 650);
     items.forEach((item, i) => {
-      if (reduced) {
-        item.classList.add('is-visible');
-        return;
-      }
       window.setTimeout(() => {
         item.classList.add('is-visible');
         // A typing indicator disappears when the message after it shows up.
@@ -47,7 +39,7 @@
     });
   }
 
-  if (!('IntersectionObserver' in window) || reduced) {
+  if (!('IntersectionObserver' in window)) {
     document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => el.classList.add('is-visible'));
     document.querySelectorAll<HTMLElement>('[data-count]').forEach(countUp);
     document.querySelectorAll<HTMLElement>('[data-sequence]').forEach(playSequence);
