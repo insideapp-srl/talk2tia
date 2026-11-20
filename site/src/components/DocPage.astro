@@ -19,9 +19,9 @@ const { lang, title, description, badge, heading, lead, wide = false, badgeTone 
 <Base lang={lang} title={title} description={description}>
   <section class="doc-hero">
     <div class="container narrow">
-      <span class={`badge badge-${badgeTone}`}>{badge}</span>
-      <h1 style="margin-top:1rem">{heading}</h1>
-      <p class="lead">{lead}</p>
+      <span class={`badge badge-${badgeTone}`} data-reveal>{badge}</span>
+      <h1 style="margin-top:1rem" data-reveal data-reveal-delay="80">{heading}</h1>
+      <p class="lead" data-reveal data-reveal-delay="160">{lead}</p>
     </div>
   </section>
   <article class={wide ? 'container prose' : 'container narrow prose'} style={wide ? 'max-width:1000px' : undefined}>
