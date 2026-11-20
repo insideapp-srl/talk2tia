@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import BetaBanner from '../components/BetaBanner.astro';
+import Motion from '../components/Motion.astro';
 import { url } from '../site';
 import { localePath, pathWithoutLocale, t, type Lang } from '../i18n';
 
@@ -47,6 +48,7 @@ const alternates = (['en', 'it'] as const).map((l) => ({ lang: l, href: new URL(
           theme = 'dark';
         }
         document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.classList.add('js');
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -64,5 +66,6 @@ const alternates = (['en', 'it'] as const).map((l) => ({ lang: l, href: new URL(
       <slot />
     </main>
     <Footer lang={lang} />
+    <Motion />
   </body>
 </html>

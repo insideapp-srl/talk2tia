@@ -14,8 +14,9 @@ const d = t(lang);
   <!-- HERO -->
   <section class="hero">
     <div class="hero-blob" aria-hidden="true"></div>
+    <div class="hero-blob second" aria-hidden="true"></div>
     <div class="container hero-grid">
-      <div>
+      <div data-reveal>
         <span class="badge badge-teal">{d.hero.badge}</span> <span class="badge badge-primary">Beta · v0.9</span>
         <h1 style="margin-top:1.25rem">{d.hero.titleA} <strong>{d.hero.titleB}</strong>.<br />{d.hero.titleC}</h1>
         <p class="lead">{d.hero.lead}</p>
@@ -29,9 +30,9 @@ const d = t(lang);
         <p class="hero-note">{d.hero.note}</p>
       </div>
 
-      <div class="window" role="img" aria-label={d.hero.demoLabel}>
+      <div class="window" role="img" aria-label={d.hero.demoLabel} data-reveal="zoom" data-reveal-delay="200">
         <div class="window-bar"><i></i><i></i><i></i><span>Claude Code · talk2tia</span></div>
-        <div class="chat">
+        <div class="chat" data-sequence>
           <div class="msg msg-user">{d.hero.demoUser}</div>
           <div class="tool-call"><span class="ok">✓</span> plc_read_block · FB_Conveyor · scl</div>
           <pre class="code-block"><span class="c">// added by Talk2Tia</span>
@@ -42,6 +43,7 @@ const d = t(lang);
 <span class="k">END_IF</span>;</pre>
           <div class="tool-call"><span class="ok">✓</span> plc_write_scl · overwrite</div>
           <div class="tool-call"><span class="ok">✓</span> {d.hero.demoCompile}</div>
+          <div class="typing" aria-hidden="true"><span></span><span></span><span></span></div>
           <div class="msg msg-bot" set:html={d.hero.demoBot} />
         </div>
       </div>
@@ -51,14 +53,14 @@ const d = t(lang);
   <!-- FEATURES -->
   <section class="section border-bottom" id="features">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <span class="badge badge-primary">{d.features.badge}</span>
         <h2>{d.features.title}</h2>
         <p class="lead">{d.features.lead}</p>
       </div>
       <div class="grid grid-3">
-        {d.features.items.map((f) => (
-          <div class="feature">
+        {d.features.items.map((f, i) => (
+          <div class="feature" data-reveal data-reveal-delay={String((i % 3) * 120)}>
             <div class={`feature-icon ${f.tone}`}>
               {f.icon === 'code' && <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>}
               {f.icon === 'layers' && <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>}
@@ -79,19 +81,19 @@ const d = t(lang);
   <section class="section section-gray" id="how-it-works">
     <div class="container">
       <div class="grid grid-2" style="align-items:center;gap:4rem">
-        <div>
+        <div data-reveal="left">
           <span class="badge badge-teal">{d.how.badge}</span>
           <h2 style="margin-top:1rem">{d.how.title}</h2>
           <div class="steps grid" style="margin-top:2rem;gap:1.75rem">
-            {d.how.steps.map((s) => (
-              <div class="step">
+            {d.how.steps.map((s, i) => (
+              <div class="step" data-reveal data-reveal-delay={String(150 + i * 150)}>
                 <h4>{s.title}</h4>
                 <p>{s.text}</p>
               </div>
             ))}
           </div>
         </div>
-        <div class="window">
+        <div class="window" data-reveal="right" data-reveal-delay="150">
           <div class="window-bar"><i></i><i></i><i></i><span>PowerShell</span></div>
           <pre class="code-block" style="border-radius:0"><span class="c">{d.how.c1}</span>
 talk2tia --doctor
@@ -113,10 +115,10 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
   <section class="section section-dark">
     <div class="container">
       <div class="stats">
-        <div><div class="stat-value">{stats.tools}</div><div class="stat-label">{d.stats.tools}</div></div>
-        <div><div class="stat-value">{stats.toolsets}</div><div class="stat-label">{d.stats.toolsets}</div></div>
-        <div><div class="stat-value">3</div><div class="stat-label">{d.stats.formats}</div></div>
-        <div><div class="stat-value">100<span>%</span></div><div class="stat-label">{d.stats.api}</div></div>
+        <div><div class="stat-value" data-count={String(stats.tools)}>{stats.tools}</div><div class="stat-label">{d.stats.tools}</div></div>
+        <div><div class="stat-value" data-count={String(stats.toolsets)}>{stats.toolsets}</div><div class="stat-label">{d.stats.toolsets}</div></div>
+        <div><div class="stat-value" data-count="3">3</div><div class="stat-label">{d.stats.formats}</div></div>
+        <div><div class="stat-value"><span class="plain" data-count="100">100</span><span>%</span></div><div class="stat-label">{d.stats.api}</div></div>
       </div>
     </div>
   </section>
@@ -124,21 +126,21 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
   <!-- TOOLSETS -->
   <section class="section">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <span class="badge badge-primary">{d.toolsets.badge}</span>
         <h2>{d.toolsets.title}</h2>
         <p class="lead">{d.toolsets.lead}</p>
       </div>
       <div class="grid grid-3">
-        {d.toolsets.items.map((ts) => (
-          <a class="card" href={url(localePath(lang, '/tools'))}>
+        {d.toolsets.items.map((ts, i) => (
+          <a class="card" href={url(localePath(lang, '/tools'))} data-reveal data-reveal-delay={String((i % 3) * 100)}>
             <span class="toolset-count">{ts.count}</span>
             <h3>{ts.name}</h3>
             <p class="toolset-id"><code>{ts.id}</code></p>
             <p class="toolset-text">{ts.text}</p>
           </a>
         ))}
-        <a class="card card-muted" href={url(localePath(lang, '/tools'))}>
+        <a class="card card-muted" href={url(localePath(lang, '/tools'))} data-reveal data-reveal-delay="200">
           <h3 class="text-primary">{d.toolsets.all}</h3>
           <p class="text-muted">{d.toolsets.allText}</p>
         </a>
@@ -149,12 +151,12 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
   <!-- SAFETY + REQUIREMENTS -->
   <section class="section section-gray" id="download">
     <div class="container grid grid-2" style="gap:3rem">
-      <div class="card">
+      <div class="card" data-reveal="left">
         <span class="badge badge-success">{d.safety.badge}</span>
         <h3 style="margin-top:1rem">{d.safety.title}</h3>
         <ul class="check-list">{d.safety.items.map((i) => <li>{i}</li>)}</ul>
       </div>
-      <div class="card">
+      <div class="card" data-reveal="right" data-reveal-delay="120">
         <span class="badge badge-primary">{d.req.badge}</span>
         <h3 style="margin-top:1rem">{d.req.title}</h3>
         <ul class="check-list">{d.req.items.map((i) => <li>{i}</li>)}</ul>
@@ -169,11 +171,11 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
   <!-- FAQ -->
   <section class="section">
     <div class="container narrow">
-      <div class="section-head" style="margin-bottom:2rem">
+      <div class="section-head" style="margin-bottom:2rem" data-reveal>
         <span class="badge badge-teal">{d.faq.badge}</span>
         <h2>{d.faq.title}</h2>
       </div>
-      <div class="faq">
+      <div class="faq" data-reveal data-reveal-delay="100">
         {d.faq.items.map((f) => (
           <details>
             <summary>{f.q}</summary>
@@ -190,7 +192,7 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
   <!-- CTA -->
   <section class="section" style="padding-top:0">
     <div class="container">
-      <div class="cta">
+      <div class="cta" data-reveal="zoom">
         <h2>{d.cta.title}</h2>
         <p class="lead">{d.cta.lead}</p>
         <div class="btn-row center" style="margin-top:1.5rem">
