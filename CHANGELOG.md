@@ -29,6 +29,8 @@ Versions `0.x` are public betas.
 
 ### Fixed
 
+- Website no longer scrolls horizontally on phones: compact navbar under 400 px, side slide-in animations replaced by
+  fade-ups on small screens, long code, tables and grid cards kept within the viewport.
 - Website and README download links now open the releases page: `/releases/latest` ignores pre-releases and
   returned a 404 while only beta releases exist.
 
