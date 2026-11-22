@@ -715,3 +715,23 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); colo
   --cc-webkit-scrollbar-bg: var(--border-strong);
 }
 #cc-main .cm, #cc-main .pm { box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+
+/* Mobile: nothing may push the page wider than the viewport. */
+html, body { overflow-x: clip; }
+.grid > * { min-width: 0; }
+.code-block { max-width: 100%; overflow-x: auto; }
+.prose :not(pre) > code { overflow-wrap: anywhere; }
+.prose td:first-child code { overflow-wrap: normal; }
+.prose pre { max-width: 100%; overflow-x: auto; }
+/* Side slide-ins would sit off-screen until revealed: use a vertical fade-up on phones. */
+@media (max-width: 767px) {
+  .js [data-reveal='left'], .js [data-reveal='right'] { transform: translate3d(0, 24px, 0); }
+}
+@media (max-width: 400px) {
+  .navbar-inner { gap: 0.4rem; }
+  .brand { gap: 0.45rem; font-size: 1.1rem; }
+  .brand-mark { width: 28px; height: 28px; }
+  .navbar .icon-btn { min-width: 36px; height: 36px; padding: 0 0.5rem; }
+  .lang-switch { height: 36px; }
+  .lang-switch a { padding: 0 0.5rem; }
+}
