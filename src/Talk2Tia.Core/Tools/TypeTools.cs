@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,6 +7,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using Siemens.Engineering;
 using Siemens.Engineering.SW;
+using Talk2Tia.Core.Diff;
 using Talk2Tia.Core.Openness;
 
 namespace Talk2Tia.Core.Tools;
@@ -75,12 +77,17 @@ public sealed class TypeTools(TiaSession tia)
         [Description("Type name (required for format 'document').")] string? name = null,
         [Description(PlcParam)] string? plc = null,
         [Description("Target type group path (created if missing).")] string? group = null,
-        [Description("Replace an existing type.")] bool overwrite = false)
+        [Description("Replace an existing type.")] bool overwrite = false,
+        [Description("Return a diff of the changes (Markdown, with LAD networks drawn before and after). Show it to the user.")] bool showDiff = true)
         => tia.RunAsync(() =>
         {
             var software = Locator.FindPlc(tia.Project, plc);
             var target = Locator.ResolveTypeGroup(software, group, create: true);
             var text = CodeTransfer.ContentOrFile(content, filePath, format);
+            var typeNames = format.Trim().Equals("xml", StringComparison.OrdinalIgnoreCase)
+                ? BlockSnapshot.NamesInXml(text).ToList()
+                : new List<string> { name ?? string.Empty };
+            var before = showDiff ? BlockSnapshot.CaptureAll(software, typeNames) : new Dictionary<string, BlockText>();
             using var ws = new Workspace();
             switch (format.Trim().ToLowerInvariant())
             {
@@ -94,7 +101,11 @@ public sealed class TypeTools(TiaSession tia)
 
                     var (dir, baseName) = CodeTransfer.WriteDocuments(typeName, text, resources, ws);
                     var result = target.Types.ImportFromDocuments(dir, baseName, overwrite ? ImportDocumentOptions.Override : ImportDocumentOptions.None);
-                    return new { result = CodeTransfer.Summarize(result.State.ToString(), result.Messages.Select(m => m.Message)) };
+                    return new
+                    {
+                        result = CodeTransfer.Summarize(result.State.ToString(), result.Messages.Select(m => m.Message)),
+                        diff = showDiff ? BlockSnapshot.DescribeChanges(software, typeNames, before) : null,
+                    };
                 }
 
                 case "xml":
@@ -102,7 +113,11 @@ public sealed class TypeTools(TiaSession tia)
                     var file = ws.FileOf("type.xml");
                     System.IO.File.WriteAllText(file.FullName, text, new System.Text.UTF8Encoding(true));
                     var imported = target.Types.Import(file, overwrite ? ImportOptions.Override : ImportOptions.None);
-                    return new { imported = imported.Select(t => t.Name).ToList() };
+                    return new
+                    {
+                        imported = imported.Select(t => t.Name).ToList(),
+                        diff = showDiff ? BlockSnapshot.DescribeChanges(software, imported.Select(t => t.Name), before) : null,
+                    };
                 }
 
                 default:

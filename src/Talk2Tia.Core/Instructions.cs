@@ -29,6 +29,9 @@ Editing PLC code
   hand the user a list of edits to make by hand, unless they ask for that. A block is changed by writing back its whole
   edited source (read, edit, write): this is the normal way to edit a block through Openness, not a workaround. The
   user's request to change a block is the approval for overwrite=true on that block.
+- Every write tool returns "diff": Markdown with a unified diff (SCL/DB/UDT) or, for LAD/FBD, the changed networks drawn
+  before and after. Show it to the user as it is (keep the code blocks intact), then explain the change. To let the user
+  review a change before writing it, use plc_diff_block. plc_render_block draws the networks of a block on request.
 - Close the block in the TIA Portal editor before writing it if TIA reports that it is open or in use. Library type
   instances are write-protected: open the type for editing with lib_type_edit first (see Libraries).
 - SCL: plc_read_block with format "scl" returns the source; edit it; plc_write_scl imports it back (blocks are created or

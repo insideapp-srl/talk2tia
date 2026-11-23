@@ -1,6 +1,6 @@
 # Talk2Tia — Tool catalog
 
-121 tools grouped in toolsets. Choose toolsets, a readonly profile and single tools with the configuration file or the
+123 tools grouped in toolsets. Choose toolsets, a readonly profile and single tools with the configuration file or the
 `TALK2TIA_TOOLSETS` environment variable (comma separated:
 `portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`; default: all). `portal` is always enabled.
 See *Configuration* in the getting started guide.
@@ -64,6 +64,8 @@ the RO tools plus `portal_attach`, `portal_start`, `portal_disconnect`, `project
 | `plc_write_scl` | ⚠ | Creates or replaces blocks/types from SCL source text (FUNCTION_BLOCK, FUNCTION, ORGANIZATION_BLOCK, DATA_BLOCK, TYPE; also .db/.udt/.awl sources). This is how SCL blocks are edited: the block in the project open in TIA Portal is replaced with the edited source and the change is visible in the editor at once. Replacing existing blocks requires overwrite=true (the user asking for the change is the approval). |
 | `plc_write_document` | ⚠ | Creates or replaces a block from SIMATIC SD documents (the text form returned by plc_read_block format='document'). Use it to edit LAD/FBD (KOP/FUP) and SCL blocks directly in the open project. Replacing an existing block requires overwrite=true (the user asking for the change is the approval). |
 | `plc_write_xml` | ⚠ | Imports blocks from SimaticML XML (as returned by plc_read_block format='xml'). Works for every language. Replacing existing blocks requires overwrite=true. |
+| `plc_diff_block` | RO | Shows what would change if the block (or PLC data type) were replaced with the given content, without writing anything: unified diff for SCL/DB/UDT sources, network by network before/after drawings for LAD documents. Use it to let the user review a change before plc_write_scl / plc_write_document. Show the returned diff. |
+| `plc_render_block` | RO | Draws the networks of a LAD/FBD block as text (contacts, coils, boxes, branches), like the TIA Portal editor; SCL networks are shown as code. Use it to show the user a block or single networks. Show the returned drawing. |
 | `plc_create_group` |  | Creates a block group path (all missing levels). |
 | `plc_delete_group` | ⚠ | Deletes a block group and all blocks inside it. Requires confirm=true. |
 | `plc_delete_block` | ⚠ | Deletes a block. Requires confirm=true. |

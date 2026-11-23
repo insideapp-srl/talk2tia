@@ -156,6 +156,42 @@ online, come *Snapshot dei valori attuali* nell'editor della DB.
 
 Dopo ogni scrittura lancia sempre `plc_compile`: il tool restituisce errori e warning con la loro posizione.
 
+## Controllare le modifiche
+
+Ogni tool di scrittura (`plc_write_scl`, `plc_write_document`, `plc_write_xml`, `plc_write_type`) esporta il blocco prima e
+dopo la modifica e restituisce un `diff` in Markdown, così l'assistente può mostrare esattamente cosa è cambiato in TIA
+Portal:
+
+- **SCL, DB, UDT**: diff unificato del sorgente (righe `+` aggiunte, `-` tolte, tre righe di contesto);
+- **KOP e FUP**: solo le reti cambiate, disegnate prima e dopo, con l'elenco degli elementi aggiunti e tolti, segnati anche
+  nel disegno. Le reti SCL dentro un blocco KOP e le modifiche all'interfaccia sono mostrate come diff.
+
+```text
+┃                #MachineValve.Command    #MachineValve.Command
+┃ + #DemoEnable        .LifeBit               .CommandRest
+┠──────┤ ├────────────────┤/├───────────┬──────────(R)──────────
+┃                                       │ #MachineValve.Command
+┃                                       │     .CommandWork
+┃                                       └──────────(R)──────────
+```
+
+`plc_diff_block` mostra la diff di una modifica proposta senza scriverla, per controllarla prima di applicarla.
+`plc_render_block` disegna su richiesta le reti di qualunque blocco KOP/FUP. Con `showDiff=false` un tool di scrittura non
+calcola la diff.
+
+### La skill talk2tia-diff
+
+Il repository include una [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia-diff) che
+insegna all'assistente a mostrare sempre queste diff, a lasciare intatti i disegni, a spiegarli e a proporre un controllo
+prima delle modifiche grandi. È allegata anche a ogni release come `talk2tia-diff-skill.zip`.
+
+- **Claude Code**: copia la cartella `talk2tia-diff` in `%USERPROFILE%\.claude\skills\` (tutti i progetti) oppure in
+  `.claude\skills\` dentro un progetto.
+- **Claude Desktop / claude.ai**: carica `talk2tia-diff-skill.zip` in *Impostazioni > Funzionalità > Skill*.
+
+I disegni sono testo semplice, quindi si vedono uguali in tutti i client, terminale compreso. Il report HTML è facoltativo
+e viene creato solo su richiesta.
+
 ## Sicurezza
 
 - I tool distruttivi richiedono `confirm=true` (o `overwrite=true` per sostituire codice). L'assistente è istruito a chiedere prima.

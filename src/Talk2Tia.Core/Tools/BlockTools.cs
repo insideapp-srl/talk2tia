@@ -9,6 +9,7 @@ using Siemens.Engineering;
 using Siemens.Engineering.CrossReference;
 using Siemens.Engineering.SW;
 using Siemens.Engineering.SW.Blocks;
+using Talk2Tia.Core.Diff;
 using Talk2Tia.Core.Openness;
 
 namespace Talk2Tia.Core.Tools;
@@ -145,7 +146,8 @@ public sealed class BlockTools(TiaSession tia)
         [Description("Source kind: auto | scl | db | udt | awl.")] string kind = "auto",
         [Description("Allow replacing blocks/types that already exist.")] bool overwrite = false,
         [Description("Keep the external source in the project after generation.")] bool keepSource = false,
-        [Description("Name of the external source (default: generated).")] string? sourceName = null)
+        [Description("Name of the external source (default: generated).")] string? sourceName = null,
+        [Description("Return a diff of the changes (Markdown, with LAD networks drawn before and after). Show it to the user.")] bool showDiff = true)
         => tia.RunAsync(() =>
         {
             var source = CodeTransfer.ContentOrFile(content, filePath, "SCL source");
@@ -166,12 +168,19 @@ public sealed class BlockTools(TiaSession tia)
             }
 
             var extension = CodeTransfer.NormalizeSourceExtension(kind, source);
+            var before = showDiff ? BlockSnapshot.CaptureAll(software, existing) : new Dictionary<string, BlockText>();
             using var ws = new Workspace();
             var onlyTypes = declared.All(d => d.Kind == "TYPE");
             var blockGroup = !onlyTypes && !string.IsNullOrWhiteSpace(group) ? Locator.ResolveBlockGroup(software, group, create: true) as PlcBlockUserGroup : null;
             var typeGroup = onlyTypes && !string.IsNullOrWhiteSpace(group) ? Locator.ResolveTypeGroup(software, group, create: true) as Siemens.Engineering.SW.Types.PlcTypeUserGroup : null;
             var result = CodeTransfer.ImportSource(software, source, extension, blockGroup, typeGroup, keepSource, sourceName, ws);
-            return new { declared = declared.Select(d => $"{d.Kind} {d.Name}").ToList(), replaced = existing, result };
+            return new
+            {
+                declared = declared.Select(d => $"{d.Kind} {d.Name}").ToList(),
+                replaced = existing,
+                result,
+                diff = showDiff ? BlockSnapshot.DescribeChanges(software, declared.Select(d => d.Name), before) : null,
+            };
         });
 
     [McpServerTool(Name = "plc_write_document", Destructive = true)]
@@ -184,7 +193,8 @@ public sealed class BlockTools(TiaSession tia)
         [Description("Content of the .s7res resource document (texts, comments). Optional.")] string? resources = null,
         [Description(PlcParam)] string? plc = null,
         [Description("Target block group path (created if missing).")] string? group = null,
-        [Description("Allow replacing an existing block.")] bool overwrite = false)
+        [Description("Allow replacing an existing block.")] bool overwrite = false,
+        [Description("Return a diff of the changes (Markdown, with LAD networks drawn before and after). Show it to the user.")] bool showDiff = true)
         => tia.RunAsync(() =>
         {
             var software = Locator.FindPlc(tia.Project, plc);
@@ -195,6 +205,7 @@ public sealed class BlockTools(TiaSession tia)
             }
 
             var target = Locator.ResolveBlockGroup(software, group, create: true);
+            var before = showDiff && exists ? BlockSnapshot.CaptureAll(software, new[] { name }) : new Dictionary<string, BlockText>();
             using var ws = new Workspace();
             var (dir, baseName) = CodeTransfer.WriteDocuments(name, document, resources, ws);
             var result = target.Blocks.ImportFromDocuments(dir, baseName, overwrite ? ImportDocumentOptions.Override : ImportDocumentOptions.None);
@@ -204,6 +215,7 @@ public sealed class BlockTools(TiaSession tia)
                 result = CodeTransfer.Summarize(result.State.ToString(), result.Messages.Select(m => m.Message)),
                 blocks = result.ImportedPlcBlocks.Select(b => b.Name).ToList(),
                 hint = "Run plc_compile to check the block.",
+                diff = showDiff ? BlockSnapshot.DescribeChanges(software, new[] { name }, before) : null,
             };
         });
 
@@ -217,14 +229,18 @@ public sealed class BlockTools(TiaSession tia)
         [Description("Target block group path (created if missing).")] string? group = null,
         [Description("Replace existing blocks with the same name.")] bool overwrite = false,
         [Description("Import even if the block interface changes structurally.")] bool ignoreStructuralChanges = false,
-        [Description("Import even if referenced objects are missing.")] bool ignoreMissingReferences = false)
+        [Description("Import even if referenced objects are missing.")] bool ignoreMissingReferences = false,
+        [Description("Return a diff of the changes (Markdown, with LAD networks drawn before and after). Show it to the user.")] bool showDiff = true)
         => tia.RunAsync(() =>
         {
             var software = Locator.FindPlc(tia.Project, plc);
             var target = Locator.ResolveBlockGroup(software, group, create: true);
+            var xml = CodeTransfer.ContentOrFile(content, filePath, "SimaticML XML");
+            var names = BlockSnapshot.NamesInXml(xml);
+            var before = showDiff ? BlockSnapshot.CaptureAll(software, names) : new Dictionary<string, BlockText>();
             using var ws = new Workspace();
             var file = ws.FileOf("import.xml");
-            System.IO.File.WriteAllText(file.FullName, CodeTransfer.ContentOrFile(content, filePath, "SimaticML XML"), new System.Text.UTF8Encoding(true));
+            System.IO.File.WriteAllText(file.FullName, xml, new System.Text.UTF8Encoding(true));
             var swOptions = SWImportOptions.None;
             if (ignoreStructuralChanges)
             {
@@ -237,7 +253,12 @@ public sealed class BlockTools(TiaSession tia)
             }
 
             var imported = target.Blocks.Import(file, overwrite ? ImportOptions.Override : ImportOptions.None, swOptions);
-            return new { imported = imported.Select(b => b.Name).ToList(), hint = "Run plc_compile to check the blocks." };
+            return new
+            {
+                imported = imported.Select(b => b.Name).ToList(),
+                hint = "Run plc_compile to check the blocks.",
+                diff = showDiff ? BlockSnapshot.DescribeChanges(software, imported.Select(b => b.Name), before) : null,
+            };
         });
 
     [McpServerTool(Name = "plc_create_group", Destructive = false)]
@@ -377,6 +398,64 @@ public sealed class BlockTools(TiaSession tia)
         }).ToList(),
         children = s.Children.Select(FormatSource).ToList(),
     };
+
+    [McpServerTool(Name = "plc_diff_block", ReadOnly = true)]
+    [Description("Shows what would change if the block (or PLC data type) were replaced with the given content, without writing " +
+                 "anything: unified diff for SCL/DB/UDT sources, network by network before/after drawings for LAD documents. " +
+                 "Use it to let the user review a change before plc_write_scl / plc_write_document. Show the returned diff.")]
+    public Task<string> DiffBlock(
+        [Description("Block or type name/path.")] string block,
+        [Description("Proposed content: SCL/DB/UDT source or SIMATIC SD document (.s7dcl).")] string content,
+        [Description("auto | scl | document. auto detects SIMATIC SD documents by their NETWORK/RUNG sections.")] string format = "auto",
+        [Description("Proposed .s7res resources (network titles, comments) for format 'document'. Optional.")] string? resources = null,
+        [Description(PlcParam)] string? plc = null)
+        => tia.RunAsync(() =>
+        {
+            var software = Locator.FindPlc(tia.Project, plc);
+            var f = format.Trim().ToLowerInvariant();
+            var isDocument = f == "document" || (f == "auto" && System.Text.RegularExpressions.Regex.IsMatch(content, @"^\s*(NETWORK|RUNG)\b", System.Text.RegularExpressions.RegexOptions.Multiline));
+            if (f is not ("auto" or "scl" or "document"))
+            {
+                throw new McpException($"Unknown format '{format}'. Use auto, scl or document.");
+            }
+
+            var name = Locator.SplitLast(block).Name;
+            var current = BlockSnapshot.TryCapture(software, block, preferDocument: isDocument);
+            var proposed = isDocument
+                ? new BlockText(current?.Name ?? name, BlockText.KindDocument, content, resources ?? current?.Resources)
+                : new BlockText(current?.Name ?? name, current?.Kind ?? "scl", content);
+            return new
+            {
+                block = proposed.Name,
+                exists = current is not null,
+                diff = BlockDiff.Describe(current, proposed) ?? "No changes.",
+            };
+        });
+
+    [McpServerTool(Name = "plc_render_block", ReadOnly = true)]
+    [Description("Draws the networks of a LAD/FBD block as text (contacts, coils, boxes, branches), like the TIA Portal editor; " +
+                 "SCL networks are shown as code. Use it to show the user a block or single networks. Show the returned drawing.")]
+    public Task<string> RenderBlock(
+        [Description("Block name/path.")] string block,
+        [Description("Network numbers to draw (1-based); omit for all.")] int[]? networks = null,
+        [Description(PlcParam)] string? plc = null)
+        => tia.RunAsync(() =>
+        {
+            var software = Locator.FindPlc(tia.Project, plc);
+            var b = Locator.FindBlock(software, block);
+            if (b is DataBlock)
+            {
+                throw new McpException($"'{b.Name}' is a data block: it has no networks. Use plc_read_block.");
+            }
+
+            var text = BlockSnapshot.Capture(software, b, preferDocument: true);
+            if (!text.IsDocument)
+            {
+                throw new McpException($"'{b.Name}' cannot be exported as a SIMATIC SD document. Use plc_read_block.");
+            }
+
+            return new { block = b.Name, drawing = BlockDiff.Render(b.Name, text, networks) };
+        });
 
     private static string ResolveFormat(string format, PlcBlock block)
     {
