@@ -22,7 +22,7 @@ export function pathWithoutLocale(pathname: string, base: string): string {
 const en = {
   beta: {
     label: 'Public beta',
-    text: 'Talk2Tia v0.9 is in public beta: use it on test projects and expect rough edges.',
+    text: 'Talk2Tia v0.10 is in public beta: use it on test projects and expect rough edges.',
     link: 'Send feedback',
   },
   meta: {
@@ -204,7 +204,7 @@ type Dict = typeof en;
 const it: Dict = {
   beta: {
     label: 'Beta pubblica',
-    text: 'Talk2Tia v0.9 è in beta pubblica: usalo su progetti di prova e aspettati qualche imperfezione.',
+    text: 'Talk2Tia v0.10 è in beta pubblica: usalo su progetti di prova e aspettati qualche imperfezione.',
     link: 'Invia un feedback',
   },
   meta: {
