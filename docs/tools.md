@@ -1,9 +1,13 @@
 # Talk2Tia — Tool catalog
 
-107 tools grouped in toolsets. Select toolsets with the `TALK2TIA_TOOLSETS` environment variable
-(comma separated: `portal,hardware,plc,online,library,hmi,object`; default: all). `portal` is always enabled.
+121 tools grouped in toolsets. Choose toolsets, a readonly profile and single tools with the configuration file or the
+`TALK2TIA_TOOLSETS` environment variable (comma separated:
+`portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`; default: all). `portal` is always enabled.
+See *Configuration* in the getting started guide.
 
-Legend: **RO** = read-only, **⚠** = destructive (needs `confirm=true` or `overwrite=true`).
+Legend: **RO** = read-only, **⚠** = destructive (needs `confirm=true` or `overwrite=true`). The readonly profile exposes
+the RO tools plus `portal_attach`, `portal_start`, `portal_disconnect`, `project_open`, `project_select`, `project_close`,
+`lib_open_global`, `online_configure`, `online_go_online`, `online_go_offline` and `diag_db_snapshot`.
 
 
 ## Session (toolset: portal)
@@ -122,6 +126,34 @@ Legend: **RO** = read-only, **⚠** = destructive (needs `confirm=true` or `over
 | `plc_compare_online` | RO | Compares the offline program with the PLC (online). Lists the objects that differ. |
 | `plc_compare` | RO | Compares the program of two PLCs in the project (offline/offline). |
 | `plc_download` | ⚠ | Downloads to the real PLC using the configured online connection. This changes the running plant: ALWAYS ask the user first and pass confirm=true. options: Software (default), SoftwareOnlyChanges, Hardware, or 'Hardware,Software'. The CPU is stopped only if allowStop=true; data blocks are re-initialized only if reinitializeDataBlocks=true. |
+
+## Diagnostics & debugging (toolset: diagnostics)
+
+Runtime data through the CPU Web API (PLCs declared in the configuration file) and through Openness.
+
+| Tool | | Description |
+|---|---|---|
+| `diag_list_plcs` | RO | Lists the PLCs configured for the Web API (name, address, user). With check=true pings each PLC, logs in and reports the rights of the user and the Web API version. |
+| `diag_cpu_state` | RO | Reads the CPU operating mode (run, stop, startup, hold, ...), its system time and the Web API version. |
+| `diag_read_variables` | RO | Reads the current values of PLC variables in one request. Use symbolic names in Web API syntax: "DB name".member.sub[2] for data blocks (optimized blocks included) or "Tag name" for PLC tags (inputs, outputs, memory). The variables must be accessible from HMI/OPC UA/Web API in TIA Portal. |
+| `diag_browse_variables` | RO | Browses the variables available through the Web API: without 'variable' lists the top level (data blocks and tags); with 'variable' lists its members (children) or describes it (var). Returns names, data types and whether they are read-only. |
+| `diag_diagnostic_buffer` | RO | Reads the CPU diagnostic buffer (newest first): timestamp, incoming/outgoing status, short, long and help texts. Requires CPU firmware with DiagnosticBuffer.Browse (S7-1500 V3.0 or later). |
+| `diag_alarms` | RO | Reads the active alarms of the CPU (program alarms and system diagnostics): id, number, status, timestamp, texts and acknowledgement state. Requires CPU firmware with Alarms.Browse (S7-1500 V3.0 or later). |
+| `diag_webapi_methods` | RO | Lists the Web API methods supported by the CPU firmware and the rights of the configured user. Use it to find out which diagnostics are available on a given CPU. |
+| `diag_list_watch_tables` | RO | Lists the watch tables of a PLC in the TIA project (with group paths) and their number of entries. |
+| `diag_watch_table` | RO | Returns the entries of a watch table of the TIA project and, with monitor=true (default), reads their current values from the CPU through the Web API, like 'Monitor all' in TIA Portal. Entries with only an absolute address cannot be read through the Web API. |
+| `diag_db_snapshot` |  | Takes a snapshot of the actual values of a data block from the CPU through TIA Portal (the PLC must be reachable online) and returns them. With create=false returns the last snapshot stored in the project. Works without the Web API. The snapshot is stored in the offline project; the PLC is not changed. |
+
+## Runtime actions (toolset: diagnostics_write)
+
+Act on the running CPU. Excluded from the readonly profile; every call needs `confirm=true`.
+
+| Tool | | Description |
+|---|---|---|
+| `diag_write_variables` | ⚠ | Writes values to PLC variables of the running CPU (like 'Modify' in a watch table). This changes the plant: ALWAYS ask the user first and pass confirm=true. Variables use Web API syntax ("DB name".member). |
+| `diag_set_operating_mode` | ⚠ | Requests a CPU operating mode change to run or stop. Stopping the CPU stops the machine: ALWAYS ask the user first and pass confirm=true. |
+| `diag_acknowledge_alarm` | ⚠ | Acknowledges an alarm of the CPU by id (from diag_alarms). Ask the user first and pass confirm=true. |
+| `diag_webapi_call` | ⚠ | Calls any Web API method of the CPU (e.g. Modules.ReadStatus, Syslog.Browse, Plc.ReadSystemTime) for what has no dedicated tool. It can also change the CPU, so it always needs confirm=true: ask the user first. Use diag_webapi_methods to list the supported methods. |
 
 ## Libraries (toolset: library)
 

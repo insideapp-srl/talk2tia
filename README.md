@@ -29,13 +29,14 @@
 
 ## What it does
 
-Talk2Tia exposes **107 MCP tools** to Claude Code, Claude Desktop or any MCP client, so you can work on a TIA Portal
+Talk2Tia exposes **121 MCP tools** to Claude Code, Claude Desktop or any MCP client, so you can work on a TIA Portal
 project in plain language:
 
 - **PLC code** — read and write SCL as source, LAD/FBD through SIMATIC SD text documents, anything else via SimaticML
 - **Libraries** — global and project libraries, types and versions, edit/release, master copies, update, harmonize, clean-up
 - **Tags & types** — tag tables, constants and UDTs in bulk
 - **Compile & online** — compile with located errors, online/offline compare, controlled download
+- **Diagnostics** — CPU operating mode, diagnostic buffer, alarms, live variables and watch tables through the CPU Web API
 - **Hardware & HMI** — device tree, catalog, modules, networks, WinCC screens and tags
 - **Generic object model** — browse, read, write and invoke any Openness object
 
@@ -63,7 +64,8 @@ require explicit confirmation; a download never stops the CPU or re-initializes 
 4. Open TIA Portal, start Claude and ask: *"Attach to TIA Portal and list the blocks of PLC_1."*
    Confirm the Openness access dialog in TIA Portal.
 
-Limit the exposed tools with `TALK2TIA_TOOLSETS` (e.g. `plc,library`). See the
+Choose what the assistant may do with a configuration file: toolsets, single tools, or a read-only profile
+(`talk2tia --read-only` for a quick start). The same file declares the PLCs read by the diagnostics tools. See the
 [documentation](https://talk2tia.insideapp.it/docs) for details.
 
 ## Repository layout

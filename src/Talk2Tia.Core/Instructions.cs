@@ -2,6 +2,17 @@ namespace Talk2Tia.Core;
 
 internal static class Instructions
 {
+    /// <summary>Instructions for the active configuration (adds a note in the readonly profile).</summary>
+    public static string For(Configuration.Talk2TiaConfig config) => config.IsReadOnly
+        ? Text + ReadOnlyNote
+        : Text;
+
+    private const string ReadOnlyNote = """
+
+This server runs in the readonly profile: tools that change the project, the libraries or the PLC are not available.
+Tell the user to change the Talk2Tia configuration if such a change is needed.
+""";
+
     public const string Text = """
 Talk2Tia drives Siemens TIA Portal V21 through the Openness API.
 
@@ -25,6 +36,14 @@ Libraries
 - lib_browse shows the project library or a global library (types, versions, master copies).
 - Typical flow for changing a type: lib_type_edit -> modify the test instance (plc_write_*) -> plc_compile -> lib_type_release.
 - lib_update_project / lib_update_library / lib_harmonize / lib_cleanup mirror the TIA Portal library commands.
+
+Diagnostics and debugging
+- diag_* tools read the running CPU through its Web API (PLCs declared under "plcs" in the Talk2Tia configuration):
+  diag_cpu_state, diag_diagnostic_buffer, diag_alarms, diag_read_variables, diag_browse_variables, diag_watch_table.
+  Variables use Web API syntax: "DB name".member or "Tag name". diag_webapi_methods shows what the CPU firmware supports.
+- diag_db_snapshot reads the actual values of a data block through TIA Portal (online connection), without the Web API.
+- diag_write_variables, diag_set_operating_mode, diag_acknowledge_alarm and diag_webapi_call act on the running plant:
+  they require confirm=true and explicit user approval every time.
 
 Safety rules
 - Tools that change the plant or delete data (plc_download, deletes, overwrite imports, closing without saving) require

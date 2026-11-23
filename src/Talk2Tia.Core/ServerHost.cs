@@ -6,67 +6,74 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
+using Talk2Tia.Core.Configuration;
 using Talk2Tia.Core.Openness;
 using Talk2Tia.Core.Tools;
+using Talk2Tia.Core.WebApi;
 
 namespace Talk2Tia.Core;
 
 public static class ServerHost
 {
     public const string ServerName = "talk2tia";
-    private const string ToolsetsEnv = "TALK2TIA_TOOLSETS";
 
-    /// <summary>Tool classes grouped by toolset name. Selected with TALK2TIA_TOOLSETS (comma separated, default: all).</summary>
+    /// <summary>Tool classes grouped by toolset name. Selected with the configuration file or TALK2TIA_TOOLSETS (default: all).</summary>
     public static readonly IReadOnlyDictionary<string, Type[]> Toolsets = new Dictionary<string, Type[]>(StringComparer.OrdinalIgnoreCase)
     {
         ["portal"] = new[] { typeof(PortalTools), typeof(ProjectTools) },
         ["hardware"] = new[] { typeof(HardwareTools) },
         ["plc"] = new[] { typeof(BlockTools), typeof(TypeTools), typeof(TagTools), typeof(ExternalSourceTools) },
         ["online"] = new[] { typeof(CompileTools), typeof(OnlineTools) },
+        ["diagnostics"] = new[] { typeof(DiagnosticsTools) },
+        ["diagnostics_write"] = new[] { typeof(DiagnosticsWriteTools) },
         ["library"] = new[] { typeof(LibraryTools) },
         ["hmi"] = new[] { typeof(HmiTools) },
         ["object"] = new[] { typeof(ObjectModelTools) },
     };
 
-    public static IEnumerable<Type> SelectToolTypes(string? setting)
-    {
-        if (string.IsNullOrWhiteSpace(setting) || setting!.Trim().Equals("all", StringComparison.OrdinalIgnoreCase))
-        {
-            return Toolsets.Values.SelectMany(t => t).Distinct();
-        }
-
-        var requested = setting.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
-        var unknown = requested.Where(r => !Toolsets.ContainsKey(r)).ToList();
-        if (unknown.Count > 0)
-        {
-            throw new ArgumentException(
-                $"Unknown toolset(s) in {ToolsetsEnv}: {string.Join(", ", unknown)}. Valid: {string.Join(", ", Toolsets.Keys)}");
-        }
-
-        // "portal" is always required to connect to TIA Portal.
-        return requested.Append("portal").Distinct(StringComparer.OrdinalIgnoreCase).SelectMany(r => Toolsets[r]).Distinct();
-    }
-
     public static async Task<int> RunAsync(string[] args)
     {
         Workspace.CleanupStale();
 
-        var builder = Host.CreateApplicationBuilder(args);
+        var options = CommandLine.Parse(args);
+        var config = Talk2TiaConfig.Load(options.ConfigPath);
+        if (options.ReadOnly)
+        {
+            config.Profile = Talk2TiaConfig.ProfileReadOnly;
+        }
+
+        var tools = ToolPolicy.Select(config);
+
+        var builder = Host.CreateApplicationBuilder(options.HostArgs);
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole(o => o.LogToStandardErrorThreshold = LogLevel.Trace);
         builder.Logging.SetMinimumLevel(LogLevel.Information);
 
-        AddTalk2Tia(builder.Services, Environment.GetEnvironmentVariable(ToolsetsEnv)).WithStdioServerTransport();
+        AddTalk2Tia(builder.Services, config, tools).WithStdioServerTransport();
 
         using var host = builder.Build();
+        host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("talk2tia").LogInformation(
+            "Configuration: {Source}; profile {Profile}; {Count} tools; {Plcs} PLC(s) for the Web API",
+            config.Source ?? "none", config.Profile, tools.Count, config.Plcs?.Count ?? 0);
         await host.RunAsync().ConfigureAwait(false);
         return 0;
     }
 
-    /// <summary>Registers the Talk2Tia MCP server (session + selected toolsets). The caller adds the transport.</summary>
+    /// <summary>Registers the Talk2Tia MCP server with the given toolsets (comma separated, null = all). The caller adds the transport.</summary>
     public static IMcpServerBuilder AddTalk2Tia(IServiceCollection services, string? toolsets)
     {
+        var config = Talk2TiaConfig.Parse("{}");
+        config.ApplyEnvironment(name => name == Talk2TiaConfig.ToolsetsEnv ? toolsets : null);
+        return AddTalk2Tia(services, config, ToolPolicy.Select(config));
+    }
+
+    /// <summary>Registers the Talk2Tia MCP server (session, Web API clients and the selected tools). The caller adds the transport.</summary>
+    public static IMcpServerBuilder AddTalk2Tia(IServiceCollection services, Talk2TiaConfig config, IReadOnlyList<ToolInfo> tools)
+    {
+        services.AddSingleton(config);
         services.AddSingleton<TiaSession>();
+        services.AddSingleton(sp => new PlcWebApiRegistry(sp.GetRequiredService<Talk2TiaConfig>()));
         var mcp = services.AddMcpServer(options =>
         {
             options.ServerInfo = new Implementation
@@ -75,12 +82,62 @@ public static class ServerHost
                 Title = "Talk2Tia — MCP server for Siemens TIA Portal V21 (Openness)",
                 Version = typeof(ServerHost).Assembly.GetName().Version?.ToString(3) ?? "0.0.0",
             };
-            options.ServerInstructions = Instructions.Text;
+            options.ServerInstructions = Instructions.For(config);
         });
 
-        // Explicit IEnumerable<Type>: a Type[] argument would bind to the generic WithTools<T>(T target) overload
-        // and register nothing.
-        IEnumerable<Type> toolTypes = SelectToolTypes(toolsets).ToList();
-        return mcp.WithTools(toolTypes);
+        // One registration per tool (instead of per class) so that single tools can be allowed or denied.
+        foreach (var tool in tools)
+        {
+            var type = tool.Type;
+            var method = tool.Method;
+            services.AddSingleton(sp => McpServerTool.Create(
+                method,
+                (Func<RequestContext<CallToolRequestParams>, object>)(ctx => ActivatorUtilities.CreateInstance(ctx.Services ?? sp, type)),
+                new McpServerToolCreateOptions { Services = sp }));
+        }
+
+        return mcp;
+    }
+}
+
+/// <summary>Talk2Tia command line options; the remaining arguments go to the generic host.</summary>
+public sealed record CommandLine(string? ConfigPath, bool ReadOnly, string[] HostArgs)
+{
+    public static CommandLine Parse(string[] args)
+    {
+        string? config = null;
+        var readOnly = false;
+        var rest = new List<string>();
+        for (var i = 0; i < args.Length; i++)
+        {
+            switch (args[i])
+            {
+                case "--config":
+                    if (i + 1 >= args.Length)
+                    {
+                        throw new ArgumentException("--config needs a file path.");
+                    }
+
+                    config = args[++i];
+                    break;
+                case "--read-only":
+                case "--readonly":
+                    readOnly = true;
+                    break;
+                default:
+                    if (args[i].StartsWith("--config=", StringComparison.Ordinal))
+                    {
+                        config = args[i].Substring("--config=".Length);
+                    }
+                    else
+                    {
+                        rest.Add(args[i]);
+                    }
+
+                    break;
+            }
+        }
+
+        return new CommandLine(config, readOnly, rest.ToArray());
     }
 }

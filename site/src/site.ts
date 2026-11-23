@@ -17,8 +17,8 @@ export function url(path: string): string {
 }
 
 export const stats = {
-  tools: 107,
-  toolsets: 7,
+  tools: 121,
+  toolsets: 9,
 };
 
 /** Google Analytics 4 measurement ID. Loaded only after the visitor accepts analytics cookies. */
