@@ -179,15 +179,16 @@ Portal:
 `plc_render_block` disegna su richiesta le reti di qualunque blocco KOP/FUP. Con `showDiff=false` un tool di scrittura non
 calcola la diff.
 
-### La skill talk2tia-diff
+### La skill talk2tia
 
-Il repository include una [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia-diff) che
-insegna all'assistente a mostrare sempre queste diff, a lasciare intatti i disegni, a spiegarli e a proporre un controllo
-prima delle modifiche grandi. È allegata anche a ogni release come `talk2tia-diff-skill.zip`.
+Il repository include una [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia) con le
+indicazioni per l'assistente. Il primo argomento gli insegna a mostrare sempre queste diff, a lasciare intatti i disegni, a
+spiegarli e a proporre un controllo prima delle modifiche grandi; i prossimi argomenti verranno aggiunti alla stessa skill.
+È allegata anche a ogni release come `talk2tia-skill.zip`.
 
-- **Claude Code**: copia la cartella `talk2tia-diff` in `%USERPROFILE%\.claude\skills\` (tutti i progetti) oppure in
+- **Claude Code**: copia la cartella `talk2tia` in `%USERPROFILE%\.claude\skills\` (tutti i progetti) oppure in
   `.claude\skills\` dentro un progetto.
-- **Claude Desktop / claude.ai**: carica `talk2tia-diff-skill.zip` in *Impostazioni > Funzionalità > Skill*.
+- **Claude Desktop / claude.ai**: carica `talk2tia-skill.zip` in *Impostazioni > Funzionalità > Skill*.
 
 I disegni sono testo semplice, quindi si vedono uguali in tutti i client, terminale compreso. Il report HTML è facoltativo
 e viene creato solo su richiesta.

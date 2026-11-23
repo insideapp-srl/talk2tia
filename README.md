@@ -37,7 +37,7 @@ project in plain language:
 - **Tags & types** — tag tables, constants and UDTs in bulk
 - **Compile & online** — compile with located errors, online/offline compare, controlled download
 - **Visual diffs** — every change comes back as a diff: SCL as unified diff, LAD/FBD networks drawn before and after
-  (plus the [`talk2tia-diff`](skills/talk2tia-diff) skill that shows them in chat)
+  (plus the [`talk2tia`](skills/talk2tia) skill that shows them in chat)
 - **Diagnostics** — CPU operating mode, diagnostic buffer, alarms, live variables and watch tables through the CPU Web API
 - **Hardware & HMI** — device tree, catalog, modules, networks, WinCC screens and tags
 - **Generic object model** — browse, read, write and invoke any Openness object
