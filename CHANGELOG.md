@@ -28,6 +28,8 @@ Versions `0.x` are public betas.
 
 ### Changed
 
+- The server instructions and the write tool descriptions tell the assistant to apply code changes itself in the open
+  project (read, edit, write back) instead of listing manual edits for the user.
 - Website fonts are self-hosted instead of loaded from Google Fonts (faster first paint, no visitor IP sent to Google).
 - Each website page has a single `<h1>`; the 404 page is excluded from the sitemap.
 
