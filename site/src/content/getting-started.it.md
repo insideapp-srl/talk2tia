@@ -48,11 +48,91 @@ claude mcp add talk2tia -- "C:\Program Files\Talk2Tia\talk2tia.exe"
 }
 ```
 
+## Configurazione
+
+Talk2Tia funziona senza configurazione. Un file JSON facoltativo decide quali tool riceve l'assistente e quali PLC può
+leggere in runtime. Talk2Tia lo cerca in quest'ordine:
+
+1. `--config <percorso>` sulla riga di comando;
+2. la variabile d'ambiente `TALK2TIA_CONFIG`;
+3. `%APPDATA%\Talk2Tia\config.json`, se esiste.
+
+```jsonc
+{
+  // "full" (default) oppure "readonly"
+  "profile": "readonly",
+  // Facoltativo: gruppi di tool da esporre (default: tutti). "portal" è sempre incluso.
+  "toolsets": ["plc", "online", "diagnostics"],
+  // Facoltativo: tool aggiunti a profilo e gruppi. * è un carattere jolly.
+  "allow": ["plc_compile"],
+  // Facoltativo: tool tolti in ogni caso. Deny vince sempre.
+  "deny": ["obj_*"],
+  // Facoltativo: PLC raggiungibili tramite la Web API della CPU, per i tool di diagnostica.
+  "plcs": {
+    "Linea1": {
+      "address": "192.168.0.10",
+      "username": "talk2tia",
+      "passwordEnv": "TALK2TIA_LINEA1_PASSWORD",
+      "certificateThumbprint": "3F2A...C9"
+    }
+  }
+}
+```
+
+I tool vengono scelti in quest'ordine: `toolsets`, poi `profile`, poi `allow`, infine `deny`. I tool esclusi non vengono
+proprio registrati, quindi l'assistente non li vede. Un nome sconosciuto in `allow` o `deny` blocca l'avvio con un errore,
+così gli errori di battitura emergono subito. Con `talk2tia --doctor --config <percorso>` controlli il file: mostra il
+profilo, quanti tool sono esposti e se ogni PLC risponde.
+
+### Profilo sola lettura
+
+`"profile": "readonly"` (oppure `--read-only`, oppure `TALK2TIA_READONLY=1`) espone solo i tool che leggono: blocchi, tag,
+tipi, hardware, librerie, riferimenti incrociati, confronto online e diagnostica. Mantiene quello che serve per lavorare
+senza modificare nulla: collegarsi a TIA Portal o avviarlo, aprire, selezionare e chiudere progetti, aprire librerie globali, configurare la
+connessione online, andare online e offline, fare snapshot delle DB. Restano esclusi scrittura di codice, tag e hardware,
+salvataggio, compilazione, modifiche alle librerie, download, `obj_set`/`obj_invoke`/`obj_create` e le azioni in runtime.
+Puoi riaggiungere singoli tool con `allow`, per esempio `"allow": ["plc_compile"]`.
+
+Per dare permessi diversi a client diversi, indica a ciascuno il proprio file con `TALK2TIA_CONFIG` nella sua
+configurazione MCP.
+
+### Web API del PLC (diagnostica)
+
+I tool `diagnostics` leggono la CPU in funzione tramite la sua Web API: modo operativo, buffer di diagnostica, allarmi,
+valori delle variabili e tabelle di controllo. CPU supportate: S7-1500 e CPU ET 200SP, S7-1200 G2 e PLCSIM Advanced con
+web server. Buffer di diagnostica e allarmi richiedono firmware S7-1500 V3.0 o successivo; `diag_webapi_methods` mostra
+cosa supporta una CPU.
+
+Sulla CPU, in TIA Portal (*Proprietà > Web server*), poi carica la configurazione hardware:
+
+1. attiva il web server sull'interfaccia usata dal PC;
+2. in *Gestione utenti* aggiungi un utente per Talk2Tia con i diritti necessari: *lettura valori* e *lettura diagnostica*
+   per il gruppo `diagnostics`; *scrittura valori*, *cambio modo operativo* e *tacitazione allarmi* solo se abiliti anche
+   `diagnostics_write`;
+3. rendi accessibili le variabili: *Accessibile da HMI/OPC UA/Web API* nelle DB e nelle tabelle delle variabili.
+
+Nel file di configurazione, `passwordEnv` è il nome della variabile d'ambiente che contiene la password: la password non va
+mai nel file. Impostala nella configurazione del client MCP (`env`) o nelle variabili d'ambiente dell'utente Windows.
+
+Di default la CPU usa un certificato autofirmato. Rendilo affidabile con `certificateThumbprint` (SHA-1 o SHA-256, dal
+certificato mostrato dal browser), oppure installa il certificato della CPU nell'archivio certificati di Windows.
+`"allowUntrustedCertificate": true` salta il controllo ed è pensato solo per reti di test isolate. `timeoutSeconds` imposta
+il timeout delle richieste (default 10).
+
+Il gruppo `diagnostics_write` (`diag_write_variables`, `diag_set_operating_mode`, `diag_acknowledge_alarm`,
+`diag_webapi_call`) agisce sull'impianto in funzione. Non fa mai parte del profilo sola lettura e ogni chiamata richiede
+`confirm=true`. Per escluderlo del tutto, elenca in `toolsets` i gruppi che vuoi senza `diagnostics_write`.
+
+`diag_db_snapshot` non usa la Web API: legge i valori attuali di una DB tramite TIA Portal mentre il PLC è raggiungibile
+online, come *Snapshot dei valori attuali* nell'editor della DB.
+
 ## Variabili d'ambiente
 
 | Variabile | Default | Scopo |
 |---|---|---|
-| `TALK2TIA_TOOLSETS` | `all` | Gruppi di tool da esporre, separati da virgola: `portal,hardware,plc,online,library,hmi,object`. Meno tool = meno contesto per il modello. |
+| `TALK2TIA_CONFIG` | — | Percorso del file di configurazione. |
+| `TALK2TIA_TOOLSETS` | `all` | Gruppi di tool da esporre, separati da virgola: `portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`. Sostituisce `toolsets` del file. Meno tool = meno contesto per il modello. |
+| `TALK2TIA_READONLY` | `0` | `1` forza il profilo sola lettura. |
 | `TALK2TIA_PUBLICAPI_DIR` | dal registro | Cartella con `Siemens.Engineering.*.dll` (V21, net48). |
 
 ## Prima sessione

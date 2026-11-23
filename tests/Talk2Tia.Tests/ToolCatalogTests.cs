@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using ModelContextProtocol.Server;
 using Talk2Tia.Core;
+using Talk2Tia.Core.Configuration;
 using Talk2Tia.Core.Openness;
 using Xunit;
 
@@ -76,7 +77,8 @@ public sealed class ToolCatalogTests
     [Fact]
     public void Toolset_selection_always_includes_portal()
     {
-        var types = ServerHost.SelectToolTypes("plc").ToList();
+        var config = Talk2TiaConfig.Parse("{ \"toolsets\": [\"plc\"] }");
+        var types = ToolPolicy.Select(config).Select(t => t.Type).Distinct().ToList();
         Assert.Contains(typeof(Talk2Tia.Core.Tools.PortalTools), types);
         Assert.Contains(typeof(Talk2Tia.Core.Tools.BlockTools), types);
         Assert.DoesNotContain(typeof(Talk2Tia.Core.Tools.LibraryTools), types);
@@ -85,7 +87,8 @@ public sealed class ToolCatalogTests
     [Fact]
     public void Unknown_toolset_is_rejected()
     {
-        Assert.Throws<ArgumentException>(() => ServerHost.SelectToolTypes("plc,nope").ToList());
+        var config = Talk2TiaConfig.Parse("{ \"toolsets\": [\"plc\", \"nope\"] }");
+        Assert.Throws<ArgumentException>(() => ToolPolicy.Select(config));
     }
 
     [Fact]

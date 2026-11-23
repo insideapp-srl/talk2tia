@@ -10,6 +10,7 @@ using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Talk2Tia.Core;
+using Talk2Tia.Core.Configuration;
 using Xunit;
 
 namespace Talk2Tia.Tests;
@@ -126,6 +127,44 @@ public sealed class McpProtocolTests
             var guarded = await client.CallToolAsync("plc_delete_block", new Dictionary<string, object?> { ["block"] = "Main" }, cancellationToken: cts.Token);
             Assert.True(guarded.IsError);
             Assert.Contains("confirm=true", Text(guarded));
+        }
+        finally
+        {
+            await client.DisposeAsync();
+            cts.Cancel();
+            await provider.DisposeAsync();
+        }
+    }
+
+    [Fact]
+    public async Task Readonly_profile_hides_write_tools_and_says_so()
+    {
+        var clientToServer = new Pipe();
+        var serverToClient = new Pipe();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var config = Talk2TiaConfig.Parse("{ \"profile\": \"readonly\" }");
+        ServerHost.AddTalk2Tia(services, config, ToolPolicy.Select(config))
+            .WithStreamServerTransport(clientToServer.Reader.AsStream(), serverToClient.Writer.AsStream());
+        var provider = services.BuildServiceProvider();
+        var cts = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+        _ = provider.GetRequiredService<McpServer>().RunAsync(cts.Token);
+        var client = await McpClient.CreateAsync(
+            new StreamClientTransport(clientToServer.Writer.AsStream(), serverToClient.Reader.AsStream()),
+            cancellationToken: cts.Token);
+        try
+        {
+            Assert.Contains("readonly profile", client.ServerInstructions ?? string.Empty);
+            var names = (await client.ListToolsAsync(cancellationToken: cts.Token)).Select(t => t.Name).ToList();
+            Assert.Contains("plc_read_block", names);
+            Assert.Contains("diag_alarms", names);
+            Assert.DoesNotContain("plc_write_scl", names);
+            Assert.DoesNotContain("diag_write_variables", names);
+
+            // Diagnostics without a configured PLC explain how to configure one.
+            var result = await client.CallToolAsync("diag_cpu_state", new Dictionary<string, object?>(), cancellationToken: cts.Token);
+            Assert.True(result.IsError);
+            Assert.Contains("plcs", Text(result));
         }
         finally
         {

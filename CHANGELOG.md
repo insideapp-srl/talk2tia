@@ -10,6 +10,13 @@ Versions `0.x` are public betas.
 
 ### Added
 
+- Configuration file (`--config`, `TALK2TIA_CONFIG` or `%APPDATA%\Talk2Tia\config.json`) to choose toolsets, add or remove
+  single tools (`allow`/`deny` with wildcards) and enable a `readonly` profile (`--read-only`, `TALK2TIA_READONLY=1`) that
+  exposes only tools that do not change the project or the PLC. `talk2tia --doctor` checks the configuration.
+- `diagnostics` toolset: CPU operating mode, diagnostic buffer, alarms, variable read and browse, watch tables with live
+  values through the CPU Web API, and data block snapshots through Openness.
+- `diagnostics_write` toolset: write variables, change the operating mode, acknowledge alarms and call any Web API method,
+  always with `confirm=true`.
 - Support the project on Ko-fi: `Sponsor` button on the repository (`.github/FUNDING.yml`), support section,
   navbar and footer links on the website, badge in the README.
 - Website scroll animations: fade-up reveals, animated chat demo, count-up statistics, ambient motion
@@ -21,6 +28,8 @@ Versions `0.x` are public betas.
 
 ### Changed
 
+- The server instructions and the write tool descriptions tell the assistant to apply code changes itself in the open
+  project (read, edit, write back) instead of listing manual edits for the user.
 - Website fonts are self-hosted instead of loaded from Google Fonts (faster first paint, no visitor IP sent to Google).
 - Each website page has a single `<h1>`; the 404 page is excluded from the sitemap.
 

@@ -21,7 +21,7 @@ public static class Program
 
         if (args.Length > 0 && args[0] == "--doctor")
         {
-            return Doctor.Run();
+            return Doctor.Run(args);
         }
 
         return await RunServerAsync(args).ConfigureAwait(false);

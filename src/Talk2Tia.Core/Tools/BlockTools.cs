@@ -134,8 +134,9 @@ public sealed class BlockTools(TiaSession tia)
 
     [McpServerTool(Name = "plc_write_scl", Destructive = true)]
     [Description("Creates or replaces blocks/types from SCL source text (FUNCTION_BLOCK, FUNCTION, ORGANIZATION_BLOCK, DATA_BLOCK, TYPE; " +
-                 "also .db/.udt/.awl sources). The source is imported through a temporary external source and compiled into blocks. " +
-                 "Replacing existing blocks requires overwrite=true.")]
+                 "also .db/.udt/.awl sources). This is how SCL blocks are edited: the block in the project open in TIA Portal is " +
+                 "replaced with the edited source and the change is visible in the editor at once. Replacing existing blocks " +
+                 "requires overwrite=true (the user asking for the change is the approval).")]
     public Task<string> WriteScl(
         [Description("Source text. Alternatively use filePath.")] string? content = null,
         [Description("Path of a source file to import instead of inline content.")] string? filePath = null,
@@ -175,7 +176,8 @@ public sealed class BlockTools(TiaSession tia)
 
     [McpServerTool(Name = "plc_write_document", Destructive = true)]
     [Description("Creates or replaces a block from SIMATIC SD documents (the text form returned by plc_read_block format='document'). " +
-                 "Use it to edit LAD/FBD (KOP/FUP) and SCL blocks. Replacing an existing block requires overwrite=true.")]
+                 "Use it to edit LAD/FBD (KOP/FUP) and SCL blocks directly in the open project. Replacing an existing block requires " +
+                 "overwrite=true (the user asking for the change is the approval).")]
     public Task<string> WriteDocument(
         [Description("Block name (also the document file name without extension).")] string name,
         [Description("Content of the .s7dcl document.")] string document,
