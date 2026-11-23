@@ -8,6 +8,15 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+### Added
+
+- Claude Code plugin marketplace in the repository: `/plugin marketplace add insideapp-srl/talk2tia` and
+  `/plugin install talk2tia@talk2tia` install the `talk2tia` skill and register the Talk2Tia MCP server.
+
+### Changed
+
+- The skill moved to `plugins/talk2tia/skills/talk2tia` (the release zip is unchanged).
+
 ## [0.11.0] - 2026-11-23
 
 ### Added

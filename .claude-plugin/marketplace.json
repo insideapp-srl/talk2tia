@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "talk2tia",
+  "description": "Talk2Tia plugins for Claude Code: skills and MCP configuration for working with Siemens TIA Portal V21.",
+  "owner": {
+    "name": "InsideApp S.r.l.",
+    "url": "https://www.insideapp.it"
+  },
+  "plugins": [
+    {
+      "name": "talk2tia",
+      "source": "./plugins/talk2tia",
+      "description": "Talk2Tia skill (shows SCL diffs and LAD/FBD networks before and after every change) and the Talk2Tia MCP server for Siemens TIA Portal V21.",
+      "category": "development",
+      "tags": ["tia-portal", "siemens", "plc", "scl", "ladder-logic", "industrial-automation", "mcp"]
+    }
+  ]
+}

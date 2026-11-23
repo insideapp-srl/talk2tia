@@ -181,13 +181,21 @@ calcola la diff.
 
 ### La skill talk2tia
 
-Il repository include una [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia) con le
+Il repository include una [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/plugins/talk2tia/skills/talk2tia) con le
 indicazioni per l'assistente. Il primo argomento gli insegna a mostrare sempre queste diff, a lasciare intatti i disegni, a
 spiegarli e a proporre un controllo prima delle modifiche grandi; i prossimi argomenti verranno aggiunti alla stessa skill.
 È allegata anche a ogni release come `talk2tia-skill.zip`.
 
-- **Claude Code**: copia la cartella `talk2tia` in `%USERPROFILE%\.claude\skills\` (tutti i progetti) oppure in
-  `.claude\skills\` dentro un progetto.
+- **Claude Code** (consigliato): installa il plugin Talk2Tia dal marketplace del repository. Aggiunge la skill e registra
+  il server MCP installato dall'MSI (`C:\Program Files\Talk2Tia\talk2tia.exe`); se hai già aggiunto a mano il server con lo
+  stesso percorso, Claude Code mantiene la tua configurazione.
+  ```text
+  /plugin marketplace add insideapp-srl/talk2tia
+  /plugin install talk2tia@talk2tia
+  ```
+  Si aggiorna con `/plugin update talk2tia@talk2tia` (oppure attiva l'aggiornamento automatico del marketplace in `/plugin`).
+- **Claude Code, solo skill**: copia la cartella `talk2tia` dello zip in `%USERPROFILE%\.claude\skills\` (tutti i
+  progetti) oppure in `.claude\skills\` dentro un progetto.
 - **Claude Desktop / claude.ai**: carica `talk2tia-skill.zip` in *Impostazioni > Funzionalità > Skill*.
 
 I disegni sono testo semplice, quindi si vedono uguali in tutti i client, terminale compreso. Il report HTML è facoltativo
