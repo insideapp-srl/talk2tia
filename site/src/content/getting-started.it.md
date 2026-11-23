@@ -1,4 +1,4 @@
-> **Beta pubblica (v0.10).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
+> **Beta pubblica (v0.11).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
 > prima di salvare o scaricare, e segnala i problemi su [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia è un server MCP che permette a un assistente AI (Claude Code, Claude Desktop o qualunque client MCP)
