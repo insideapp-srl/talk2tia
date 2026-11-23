@@ -1,6 +1,6 @@
 # Talk2Tia — Getting started
 
-> **Public beta (v0.10).** Talk2Tia is feature-complete but still in beta: use it on test projects, review every change
+> **Public beta (v0.11).** Talk2Tia is feature-complete but still in beta: use it on test projects, review every change
 > before saving or downloading, and please report issues on [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia is an MCP server that lets an AI assistant (Claude Code, Claude Desktop or any MCP client)
@@ -179,15 +179,16 @@ after the change and returns a `diff` in Markdown, so the assistant can show exa
 `plc_render_block` draws the networks of any LAD/FBD block on request. Pass `showDiff=false` to a write tool to skip the
 diff.
 
-### The talk2tia-diff skill
+### The talk2tia skill
 
-The repository ships an [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia-diff) that
-teaches the assistant to always show these diffs, to keep the drawings intact, to explain them and to offer a review
-before large changes. It is also attached to each release as `talk2tia-diff-skill.zip`.
+The repository ships an [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia) with
+guidance for the assistant. Its first topic teaches it to always show these diffs, to keep the drawings intact, to explain
+them and to offer a review before large changes; new topics will be added to the same skill. It is also attached to each
+release as `talk2tia-skill.zip`.
 
-- **Claude Code**: copy the `talk2tia-diff` folder to `%USERPROFILE%\.claude\skills\` (all projects) or to
+- **Claude Code**: copy the `talk2tia` folder to `%USERPROFILE%\.claude\skills\` (all projects) or to
   `.claude\skills\` in a project.
-- **Claude Desktop / claude.ai**: upload `talk2tia-diff-skill.zip` in *Settings > Capabilities > Skills*.
+- **Claude Desktop / claude.ai**: upload `talk2tia-skill.zip` in *Settings > Capabilities > Skills*.
 
 The drawings are plain text, so they look the same in every client, including the terminal. An HTML report is optional
 and made only on request.

@@ -1,9 +1,4 @@
----
-name: talk2tia-diff
-description: Shows the user what changes in Siemens TIA Portal PLC code edited through the Talk2Tia MCP server - unified diffs for SCL, DB and UDT sources and before/after drawings of LAD (KOP) and FBD networks. Use it whenever you change or propose to change a block or PLC data type with Talk2Tia (plc_write_scl, plc_write_document, plc_write_xml, plc_write_type), and when the user asks to see a block, a network or what was changed.
----
-
-# Talk2Tia: show the changes
+# Showing the changes
 
 Talk2Tia computes the diffs itself, from the code before and after the change in TIA Portal, and draws LAD networks as
 text. Your job is to show them faithfully and explain them. Never draw networks or invent diffs yourself: use what the
