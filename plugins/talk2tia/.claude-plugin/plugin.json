@@ -1,0 +1,14 @@
+{
+  "name": "talk2tia",
+  "displayName": "Talk2Tia",
+  "version": "0.11.0",
+  "description": "Work on Siemens TIA Portal V21 projects with Claude: the Talk2Tia MCP server (installed with the Talk2Tia MSI) and the talk2tia skill, which shows SCL diffs and LAD/FBD networks drawn before and after every change.",
+  "author": {
+    "name": "InsideApp S.r.l.",
+    "url": "https://www.insideapp.it"
+  },
+  "homepage": "https://talk2tia.insideapp.it",
+  "repository": "https://github.com/insideapp-srl/talk2tia",
+  "license": "MIT",
+  "keywords": ["tia-portal", "siemens", "openness", "plc", "scl", "ladder-logic", "mcp"]
+}
