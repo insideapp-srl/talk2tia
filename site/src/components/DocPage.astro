@@ -28,3 +28,15 @@ const { lang, title, description, badge, heading, lead, wide = false, badgeTone 
     <slot />
   </article>
 </Base>
+
+<script>
+  // Label each table cell with its column header, so tables can be shown as cards on phones (global.css).
+  document.querySelectorAll<HTMLTableElement>('.prose table').forEach((table) => {
+    const headers = Array.from(table.querySelectorAll('thead th')).map((th) => th.textContent?.trim() ?? '');
+    table.querySelectorAll('tbody tr').forEach((row) => {
+      Array.from(row.children).forEach((cell, i) => {
+        if (headers[i]) cell.setAttribute('data-label', headers[i]);
+      });
+    });
+  });
+</script>

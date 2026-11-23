@@ -526,7 +526,8 @@ a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); colo
 /* ---------- Docs pages ---------- */
 
 .doc-hero { padding: 4rem 0 2rem; border-bottom: 1px solid var(--border); background: var(--bg-soft); }
-.prose { padding: 3rem 0 5rem; }
+/* Only vertical padding: the horizontal gutter comes from .container. */
+.prose { padding-top: 3rem; padding-bottom: 5rem; }
 .prose h1 { display: none; }
 .prose h2 { margin-top: 2.5rem; padding-top: 1rem; font-size: 1.75rem; }
 .prose h3 { margin-top: 2rem; }
@@ -734,4 +735,26 @@ html, body { overflow-x: clip; }
   .navbar .icon-btn { min-width: 36px; height: 36px; padding: 0 0.5rem; }
   .lang-switch { height: 36px; }
   .lang-switch a { padding: 0 0.5rem; }
+}
+
+/* Docs tables on phones: each row becomes a small card, labelled from the table header (see DocPage.astro). */
+@media (max-width: 640px) {
+  .prose table { display: block; overflow: visible; border-top: 1px solid var(--border-strong); }
+  .prose thead { display: none; }
+  .prose tbody, .prose tr { display: block; }
+  .prose tr { padding: 0.65rem 0; border-bottom: 1px solid var(--border-strong); }
+  .prose td { display: block; border: 0; padding: 0.2rem 0.25rem; }
+  .prose td:empty { display: none; }
+  /* Unlabelled flag column (e.g. RO / ⚠ in the tool catalog) sits next to the name. */
+  .prose td:first-child:has(+ td:not([data-label])),
+  .prose td:first-child + td:not([data-label]) { display: inline-block; }
+  .prose td[data-label]:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
 }
