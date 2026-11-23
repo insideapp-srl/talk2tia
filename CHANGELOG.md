@@ -8,6 +8,8 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-23
+
 ### Added
 
 - Configuration file (`--config`, `TALK2TIA_CONFIG` or `%APPDATA%\Talk2Tia\config.json`) to choose toolsets, add or remove
@@ -66,5 +68,6 @@ First public beta.
 - Signed MSI installer and portable zip.
 - Website with documentation in English and Italian.
 
-[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/insideapp-srl/talk2tia/releases/tag/v0.9.0
