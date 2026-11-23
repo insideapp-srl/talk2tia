@@ -8,6 +8,14 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+### Added
+
+- Visual diffs: the write tools return what changed in TIA Portal (`diff`, Markdown): a unified diff for SCL/DB/UDT
+  sources and, for LAD/FBD blocks, the changed networks drawn as text before and after, with added and removed elements
+  marked. New `plc_diff_block` (preview a change without writing it) and `plc_render_block` (draw LAD/FBD networks).
+- `talk2tia-diff` Agent Skill (`skills/talk2tia-diff`, also attached to releases) that tells the assistant to show the
+  diffs in chat and explain them.
+
 ## [0.10.0] - 2026-11-23
 
 ### Added

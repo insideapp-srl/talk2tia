@@ -62,7 +62,7 @@ const en = {
     title: 'All of TIA Portal, in plain language.',
     lead: 'From a single LAD network to your company library: Talk2Tia gives an AI assistant what you do every day in TIA Portal.',
     items: [
-      { icon: 'code', tone: '', title: 'Writes SCL and LAD', text: 'Reads and edits SCL blocks as source, LAD/FBD through the SIMATIC SD text documents, tags, constants and UDTs in bulk. SimaticML covers everything else.' },
+      { icon: 'code', tone: '', title: 'Writes SCL and LAD', text: 'Reads and edits SCL and LAD/FBD blocks, tags, constants and UDTs. Every change comes back as a diff, with LAD networks drawn before and after.' },
       { icon: 'layers', tone: 'teal', title: 'Libraries, for real', text: 'Types and versions, edit and release, master copies, project and library updates, harmonize and clean-up: the same commands as TIA Portal.' },
       { icon: 'check', tone: 'success', title: 'Compiles and checks', text: 'Compiles hardware, software or a single block and returns errors and warnings with their location, so the assistant fixes them itself.' },
       { icon: 'cpu', tone: '', title: 'Hardware and networks', text: 'Catalog, devices, modules, subnets and addresses. Every Openness attribute can be read and written.' },
@@ -91,7 +91,7 @@ const en = {
     allText: 'Names, descriptions and risk level of every tool.',
     items: [
       { id: 'portal', name: 'Session & project', count: 16, text: 'Attach to an open TIA Portal or start it headless; open, create, save, archive and retrieve projects.' },
-      { id: 'plc', name: 'PLC program', count: 35, text: 'Blocks, groups, UDTs, tags, constants, external sources, cross references.' },
+      { id: 'plc', name: 'PLC program', count: 37, text: 'Blocks, groups, UDTs, tags, constants, external sources, cross references.' },
       { id: 'library', name: 'Libraries', count: 25, text: 'Global and project libraries, types, versions, master copies and synchronisation.' },
       { id: 'hardware', name: 'Hardware', count: 11, text: 'Device tree, catalog, modules, subnets and network nodes.' },
       { id: 'online', name: 'Online', count: 10, text: 'Compile, online/offline compare, connection and controlled download.' },
@@ -244,7 +244,7 @@ const it: Dict = {
     title: 'Tutto TIA Portal, in linguaggio naturale.',
     lead: 'Dalla singola rete KOP alla libreria aziendale: Talk2Tia espone a un assistente AI ciò che fai ogni giorno in TIA Portal.',
     items: [
-      { icon: 'code', tone: '', title: 'Scrive SCL e KOP', text: "Legge e modifica i blocchi in SCL come sorgente, in KOP/FUP attraverso i documenti testuali SIMATIC SD, e tag, costanti e UDT in blocco. Per tutto il resto c'è SimaticML." },
+      { icon: 'code', tone: '', title: 'Scrive SCL e KOP', text: 'Legge e modifica blocchi SCL e KOP/FUP, tag, costanti e UDT. Ogni modifica torna come diff, con le reti KOP disegnate prima e dopo.' },
       { icon: 'layers', tone: 'teal', title: 'Librerie, davvero', text: 'Tipi e versioni, edit e release, master copy, update di progetto e di libreria, harmonize e cleanup: gli stessi comandi di TIA Portal.' },
       { icon: 'check', tone: 'success', title: 'Compila e verifica', text: 'Compila hardware, software o un singolo blocco e restituisce errori e warning con la loro posizione, così l’assistente corregge da solo.' },
       { icon: 'cpu', tone: '', title: 'Hardware e reti', text: 'Catalogo, dispositivi, moduli, subnet e indirizzi. Ogni attributo Openness è leggibile e scrivibile.' },
@@ -273,7 +273,7 @@ const it: Dict = {
     allText: 'Nomi, descrizioni e livello di rischio di ogni tool.',
     items: [
       { id: 'portal', name: 'Sessione e progetto', count: 16, text: 'Attach a TIA aperto o avvio headless, apri, crea, salva, archivia e recupera progetti.' },
-      { id: 'plc', name: 'Programma PLC', count: 35, text: 'Blocchi, gruppi, UDT, tag, costanti, sorgenti esterne, riferimenti incrociati.' },
+      { id: 'plc', name: 'Programma PLC', count: 37, text: 'Blocchi, gruppi, UDT, tag, costanti, sorgenti esterne, riferimenti incrociati.' },
       { id: 'library', name: 'Librerie', count: 25, text: 'Librerie globali e di progetto, tipi, versioni, master copy e sincronizzazione.' },
       { id: 'hardware', name: 'Hardware', count: 11, text: 'Albero dispositivi, catalogo, moduli, subnet e nodi di rete.' },
       { id: 'online', name: 'Online', count: 10, text: 'Compilazione, confronto online/offline, connessione e download controllato.' },

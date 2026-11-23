@@ -157,6 +157,41 @@ reachable online, like *Snapshot of the actual values* in the data block editor.
 
 Always run `plc_compile` after writing code: the tool returns errors and warnings with their location.
 
+## Reviewing changes
+
+Every write tool (`plc_write_scl`, `plc_write_document`, `plc_write_xml`, `plc_write_type`) exports the block before and
+after the change and returns a `diff` in Markdown, so the assistant can show exactly what changed in TIA Portal:
+
+- **SCL, DB, UDT**: a unified diff of the source (`+` added, `-` removed lines, three lines of context);
+- **LAD and FBD**: only the networks that changed, drawn before and after, with the added and removed elements listed
+  and marked in the drawings. Changed SCL networks inside a LAD block and interface changes are shown as diffs.
+
+```text
+┃                #MachineValve.Command    #MachineValve.Command
+┃ + #DemoEnable        .LifeBit               .CommandRest
+┠──────┤ ├────────────────┤/├───────────┬──────────(R)──────────
+┃                                       │ #MachineValve.Command
+┃                                       │     .CommandWork
+┃                                       └──────────(R)──────────
+```
+
+`plc_diff_block` shows the diff of a proposed change without writing it, for a review before applying it.
+`plc_render_block` draws the networks of any LAD/FBD block on request. Pass `showDiff=false` to a write tool to skip the
+diff.
+
+### The talk2tia-diff skill
+
+The repository ships an [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/skills/talk2tia-diff) that
+teaches the assistant to always show these diffs, to keep the drawings intact, to explain them and to offer a review
+before large changes. It is also attached to each release as `talk2tia-diff-skill.zip`.
+
+- **Claude Code**: copy the `talk2tia-diff` folder to `%USERPROFILE%\.claude\skills\` (all projects) or to
+  `.claude\skills\` in a project.
+- **Claude Desktop / claude.ai**: upload `talk2tia-diff-skill.zip` in *Settings > Capabilities > Skills*.
+
+The drawings are plain text, so they look the same in every client, including the terminal. An HTML report is optional
+and made only on request.
+
 ## Safety
 
 - Destructive tools need `confirm=true` (or `overwrite=true` for replacing code). The assistant is instructed to ask first.

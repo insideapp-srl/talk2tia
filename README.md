@@ -29,13 +29,15 @@
 
 ## What it does
 
-Talk2Tia exposes **121 MCP tools** to Claude Code, Claude Desktop or any MCP client, so you can work on a TIA Portal
+Talk2Tia exposes **123 MCP tools** to Claude Code, Claude Desktop or any MCP client, so you can work on a TIA Portal
 project in plain language:
 
 - **PLC code** — read and write SCL as source, LAD/FBD through SIMATIC SD text documents, anything else via SimaticML
 - **Libraries** — global and project libraries, types and versions, edit/release, master copies, update, harmonize, clean-up
 - **Tags & types** — tag tables, constants and UDTs in bulk
 - **Compile & online** — compile with located errors, online/offline compare, controlled download
+- **Visual diffs** — every change comes back as a diff: SCL as unified diff, LAD/FBD networks drawn before and after
+  (plus the [`talk2tia-diff`](skills/talk2tia-diff) skill that shows them in chat)
 - **Diagnostics** — CPU operating mode, diagnostic buffer, alarms, live variables and watch tables through the CPU Web API
 - **Hardware & HMI** — device tree, catalog, modules, networks, WinCC screens and tags
 - **Generic object model** — browse, read, write and invoke any Openness object
