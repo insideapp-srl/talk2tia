@@ -1,4 +1,4 @@
-> **Beta pubblica (v0.11).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
+> **Beta pubblica (v0.12).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
 > prima di salvare o scaricare, e segnala i problemi su [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia è un server MCP che permette a un assistente AI (Claude Code, Claude Desktop o qualunque client MCP)
@@ -220,4 +220,5 @@ e viene creato solo su richiesta.
 Talk2Tia è fornito "così com'è", senza garanzie di alcun tipo. InsideApp S.r.l. non risponde di danni, perdite di dati,
 fermi produttivi, lesioni o altre conseguenze derivanti dal suo utilizzo, comprese le modifiche apportate da assistenti
 AI a progetti, programmi PLC o impianti. Ogni modifica deve essere verificata, collaudata e approvata da personale
-qualificato prima di arrivare su una macchina reale. I termini completi sono nella licenza e nelle note legali del sito.
+qualificato prima di arrivare su una macchina reale. I termini completi sono nella licenza e nelle note legali del sito;
+il setup MSI chiede di accettarli prima dell'installazione.

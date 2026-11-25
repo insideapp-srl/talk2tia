@@ -8,8 +8,13 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-11-25
+
 ### Added
 
+- Setup wizard in the MSI installer: the legal notice (disclaimer of warranty and limitation of liability, English and
+  Italian) and the MIT licence must be accepted before installing; InsideApp branding; the finish page links to the
+  guide and has a "Donate on Ko-fi" button.
 - Claude Code plugin marketplace in the repository: `/plugin marketplace add insideapp-srl/talk2tia` and
   `/plugin install talk2tia@talk2tia` install the `talk2tia` skill and register the Talk2Tia MCP server.
 
@@ -87,7 +92,8 @@ First public beta.
 - Signed MSI installer and portable zip.
 - Website with documentation in English and Italian.
 
-[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/insideapp-srl/talk2tia/releases/tag/v0.9.0
