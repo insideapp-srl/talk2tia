@@ -13,6 +13,9 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of Talk2Tia is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
+    <!-- Setup pages: legal notice to accept, InsideApp branding, donate button (Ui.wxs). -->
+    <UIRef Id="Talk2TiaUI" />
+
     <Property Id="ARPHELPLINK" Value="https://github.com/insideapp-srl/talk2tia" />
     <Property Id="ARPURLINFOABOUT" Value="https://talk2tia.insideapp.it" />
     <Property Id="ARPCOMMENTS" Value="MCP server for Siemens TIA Portal V21 through the Openness API." />
