@@ -61,6 +61,8 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Drawing" />
     <EmbeddedResource Include="..\..\installer\assets\talk2tia.ico" LogicalName="Talk2Tia.Core.talk2tia.ico" />
+    <EmbeddedResource Include="..\..\installer\assets\insideapp.png" LogicalName="Talk2Tia.Core.insideapp.png" />
+    <EmbeddedResource Include="..\..\installer\assets\talk2tia-128.png" LogicalName="Talk2Tia.Core.talk2tia-128.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -27,6 +27,7 @@ public sealed class TrayIcon : IDisposable
     private ToolStripMenuItem? _updateItem;
     private ToolStripMenuItem? _sessionsItem;
     private SynchronizationContext? _ui;
+    private AboutForm? _about;
 
     private TrayIcon(UpdateService updates)
     {
@@ -87,8 +88,13 @@ public sealed class TrayIcon : IDisposable
         }
     }
 
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetProcessDPIAware();
+
     private void ShowIcon()
     {
+        // Sharp text and images on scaled displays (the process has no other UI).
+        SetProcessDPIAware();
         Application.EnableVisualStyles();
         _context = new ApplicationContext();
         using var icon = LoadIcon();
@@ -112,7 +118,7 @@ public sealed class TrayIcon : IDisposable
             Link("InsideApp", Links.InsideApp),
             Link(Text.Donate, Links.Donate),
             new ToolStripSeparator(),
-            new ToolStripMenuItem(Text.WorkFolder, null, (_, _) => Open(Workspace.Root, createFolder: true)),
+            new ToolStripMenuItem(Text.WorkFolder, null, (_, _) => OpenWorkFolder()),
             new ToolStripMenuItem(Text.About, null, (_, _) => ShowAbout()),
         });
 
@@ -140,11 +146,22 @@ public sealed class TrayIcon : IDisposable
         menu.Dispose();
     }
 
-    private static Icon LoadIcon()
+    internal static Icon LoadIcon(int size = 0)
     {
         using var stream = typeof(TrayIcon).Assembly.GetManifestResourceStream("Talk2Tia.Core.talk2tia.ico");
-        return stream is null ? (Icon)SystemIcons.Application.Clone() : new Icon(stream, SystemInformation.SmallIconSize);
+        return stream is null
+            ? (Icon)SystemIcons.Application.Clone()
+            : new Icon(stream, size > 0 ? new Size(size, size) : SystemInformation.SmallIconSize);
     }
+
+    /// <summary>Embedded image (installer/assets), or null if missing.</summary>
+    internal static Image? LoadImage(string name)
+    {
+        using var stream = typeof(TrayIcon).Assembly.GetManifestResourceStream("Talk2Tia.Core." + name);
+        return stream is null ? null : new Bitmap(Image.FromStream(stream));
+    }
+
+    internal static void OpenWorkFolder() => Open(Workspace.Root, createFolder: true);
 
     private static ToolStripMenuItem Link(string text, string url) => new(text, null, (_, _) => Open(url));
 
@@ -213,10 +230,20 @@ public sealed class TrayIcon : IDisposable
         }
     }
 
-    private static void ShowAbout() =>
-        MessageBox.Show(
-            $"Talk2Tia {UpdateService.Current.ToString(3)}\n{Text.Tagline}\n\n© 2026 InsideApp S.r.l. — MIT License\n{Links.Site}\n\n{Text.Sessions(CountSessions())}",
-            "Talk2Tia", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    private void ShowAbout()
+    {
+        if (_about is { IsDisposed: false })
+        {
+            _about.WindowState = FormWindowState.Normal;
+            _about.Activate();
+            return;
+        }
+
+        _about = new AboutForm(_updates, CountSessions(), OnUpdateClicked);
+        _about.FormClosed += (_, _) => _about = null;
+        _about.Show();
+        _about.Activate();
+    }
 
     private static int CountSessions()
     {
@@ -230,7 +257,7 @@ public sealed class TrayIcon : IDisposable
         }
     }
 
-    private static void Open(string target, bool createFolder = false)
+    internal static void Open(string target, bool createFolder = false)
     {
         try
         {
@@ -275,6 +302,17 @@ public sealed class TrayIcon : IDisposable
         public static string Donate => It ? "❤ Dona su Ko-fi" : "❤ Donate on Ko-fi";
         public static string WorkFolder => It ? "Apri la cartella di lavoro" : "Open the work folder";
         public static string About => It ? "Informazioni" : "About";
+        public static string WorkFolderShort => It ? "Cartella di lavoro" : "Work folder";
+        public static string VersionLabel => It ? "Versione" : "Version";
+        public static string UpToDate => It ? "Stai usando l'ultima versione" : "You are using the latest version";
+        public static string UpdateReady(Version v) => It ? $"È disponibile la versione {v.ToString(3)}" : $"Version {v.ToString(3)} is available";
+        public static string Install => It ? "Installa" : "Install";
+        public static string DonatePitch => It
+            ? "Talk2Tia è gratuito e open source. Se ti fa risparmiare tempo, una donazione ci aiuta a provarlo su più PLC e versioni di TIA Portal."
+            : "Talk2Tia is free and open source. If it saves you time, a donation helps us test it on more PLCs and TIA Portal versions.";
+        public static string DonateButton => It ? "Sostieni Talk2Tia su Ko-fi" : "Support Talk2Tia on Ko-fi";
+        public static string MadeBy => It ? "Realizzato da" : "Made by";
+        public static string Close => It ? "Chiudi" : "Close";
         public static string CheckUpdates => It ? "Cerca aggiornamenti" : "Check for updates";
         public static string Checking => It ? "Ricerca aggiornamenti in corso…" : "Checking for updates…";
         public static string Sessions(int n) => It ? (n == 1 ? "1 sessione attiva" : $"{n} sessioni attive") : (n == 1 ? "1 active session" : $"{n} active sessions");

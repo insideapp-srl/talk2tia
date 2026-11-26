@@ -3,6 +3,7 @@
 //   Dialog.bmp   - 493x312 background of the welcome and finish pages
 //   Banner.bmp   - 493x58 top banner of the other pages
 //   talk2tia.ico - executable, tray and Add/Remove Programs icon
+//   insideapp.png, talk2tia-128.png - images of the About window
 // Usage (sharp comes from the website dependencies):
 //   cd site && npm ci && cd .. && node installer/assets/generate.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -144,6 +145,10 @@ const banner = sharp(Buffer.from(bannerSvg)).composite([
   { input: await png(iconSvg(40), 40), left: 445, top: 9 },
 ]);
 await writeBmp(banner, 'Banner.bmp');
+
+// ---------- Images for the About window (2x for high-DPI screens) ----------
+writeFileSync(join(here, 'insideapp.png'), await sharp(await png(insideapp, 1040)).trim().resize({ width: 520 }).png().toBuffer());
+writeFileSync(join(here, 'talk2tia-128.png'), await sharp(iconSvg(128)).resize(128, 128).png().toBuffer());
 
 // ---------- talk2tia.ico ----------
 // Executable, tray and Add/Remove Programs icon. Small sizes as 32-bit DIBs (the classic format System.Drawing reads
