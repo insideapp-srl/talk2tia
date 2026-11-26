@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "talk2tia": {
-      "command": "C:\\Program Files\\Talk2Tia\\talk2tia.exe",
+      "command": "talk2tia",
       "args": []
     }
   }

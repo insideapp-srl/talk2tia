@@ -2,7 +2,7 @@
 // installer instead of the releases page. The release workflow redeploys the site after publishing, so a new version
 // shows up within minutes. If the API is unreachable the buttons fall back to the releases page.
 //
-// /releases/latest is not used: GitHub excludes pre-releases (all 0.x betas) from it.
+// /releases/latest is not used: GitHub excludes pre-releases from it.
 
 export interface ReleaseAsset {
   name: string;

@@ -6,19 +6,21 @@ using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using Siemens.Engineering;
 using Talk2Tia.Core.Openness;
+using Talk2Tia.Core.Updates;
 
 namespace Talk2Tia.Core.Tools;
 
 [McpServerToolType]
-public sealed class PortalTools(TiaSession tia)
+public sealed class PortalTools(TiaSession tia, UpdateService updates)
 {
     [McpServerTool(Name = "portal_status", ReadOnly = true, Idempotent = true)]
-    [Description("Shows whether Talk2Tia is connected to TIA Portal, the connection mode and the open projects.")]
+    [Description("Shows whether Talk2Tia is connected to TIA Portal, the connection mode and the open projects, plus the Talk2Tia " +
+                 "version and whether an update is available.")]
     public Task<string> Status() => tia.RunAsync(() =>
     {
         if (!tia.IsConnected)
         {
-            return new { connected = false, hint = "Use portal_list_instances + portal_attach, or portal_start." };
+            return new { connected = false, hint = "Use portal_list_instances + portal_attach, or portal_start.", version = UpdateService.Current.ToString(3), update = updates.Status };
         }
 
         var active = tia.TryGetProject();
@@ -31,6 +33,8 @@ public sealed class PortalTools(TiaSession tia)
             activeProject = active?.Name,
             openProjects = tia.Portal.Projects.Select(p => new { name = p.Name, path = p.Path?.FullName, modified = p.IsModified }).ToList(),
             openGlobalLibraries = tia.Portal.GlobalLibraries.Select(l => l.Name).ToList(),
+            version = UpdateService.Current.ToString(3),
+            update = updates.Status,
         };
     });
 

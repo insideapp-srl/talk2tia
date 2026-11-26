@@ -63,6 +63,10 @@ Safety rules
 Anything without a dedicated tool can be reached through the generic object-model tools (obj_browse, obj_get,
 obj_set, obj_invoke, obj_create): every Openness object exposes its compositions, attributes and actions.
 
+Updates
+- portal_status reports the Talk2Tia version and, when a newer signed release is ready, an "update" entry: tell the
+  user once, with how to install it (Talk2Tia icon in the notification area > Install update).
+
 Feedback to the maintainers
 - When a Talk2Tia tool fails in a way that looks like a bug, when you need a workaround (generic obj_* tools, another
   format) for something a dedicated tool should do, or when a missing feature blocks the user, finish the user's task

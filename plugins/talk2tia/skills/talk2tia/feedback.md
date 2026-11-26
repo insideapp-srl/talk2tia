@@ -1,8 +1,3 @@
----
-name: talk2tia-feedback
-description: Collects feedback on the Talk2Tia MCP server and sends it to the maintainers as a GitHub issue or an e-mail to support@insideapp.help. Use it when the user wants to report a Talk2Tia bug, request an improvement or a missing tool, or give feedback; and offer it (once, after finishing the task) when a Talk2Tia tool fails unexpectedly, when you had to use a workaround such as the generic obj_* tools, or when a missing feature blocked the user.
----
-
 # Talk2Tia feedback
 
 Talk2Tia improves through the problems its users hit. Your job: notice them, offer to report them, write a report the

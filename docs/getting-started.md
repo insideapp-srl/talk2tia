@@ -1,7 +1,7 @@
 # Talk2Tia — Getting started
 
-> **Public beta (v0.13).** Talk2Tia is feature-complete but still in beta: use it on test projects, review every change
-> before saving or downloading, and please report issues on [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
+> Talk2Tia changes real engineering projects: review every change before saving or downloading, and please report
+> issues and ideas on [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia is an MCP server that lets an AI assistant (Claude Code, Claude Desktop or any MCP client)
 work inside Siemens TIA Portal V21 through the official Openness API.
@@ -29,12 +29,40 @@ Override the location with `dotnet build /p:TiaPublicApiDir=...` or, at runtime,
 
 The executable is `src\Talk2Tia.Server\bin\<Configuration>\net48\talk2tia.exe`.
 
+## Install
+
+Download `Talk2Tia-<version>-x64.msi` from the [website](https://talk2tia.insideapp.it) or the
+[releases](https://github.com/insideapp-srl/talk2tia/releases), or use winget:
+
+```powershell
+winget install InsideApp.Talk2Tia            # add --scope machine for all users
+```
+
+The setup asks who can use Talk2Tia:
+
+- **Just for me** (recommended): installs in `%LOCALAPPDATA%\Programs\Talk2Tia`, no administrator rights, updates
+  install silently.
+- **All users**: installs in `C:\Program Files\Talk2Tia`; installing and updating need administrator rights.
+  Silent installs (`msiexec /i Talk2Tia-<version>-x64.msi /qn`) use this scope; add `ALLUSERS=2 MSIINSTALLPERUSER=1`
+  for a per-user install.
+
+Either way `talk2tia` is added to the PATH. Restart the MCP client after installing so it sees the new PATH.
+
+### Notification-area icon and updates
+
+While a session is running, Talk2Tia shows its icon in the Windows notification area: the menu shows the version and
+the active sessions, and opens the documentation, the website, GitHub, InsideApp and the donation page. Once a day
+Talk2Tia checks for a new release; it downloads it, verifies the SHA-256 checksum and the InsideApp signature, and
+notifies you. Choose **Install update**: the update is installed when every Talk2Tia session has ended (close and
+reopen the MCP client). `portal_status` reports the available update too, so the assistant can tell you. Turn them off
+with `"trayIcon": false` and `"updates": "off"` in the configuration, or `TALK2TIA_TRAY=0` and `TALK2TIA_UPDATES=off`.
+
 ## Configure an MCP client
 
 ### Claude Code
 
 ```powershell
-claude mcp add talk2tia -- "C:\Program Files\Talk2Tia\talk2tia.exe"
+claude mcp add talk2tia -- talk2tia
 ```
 
 ### Claude Desktop (`claude_desktop_config.json`)
@@ -43,7 +71,7 @@ claude mcp add talk2tia -- "C:\Program Files\Talk2Tia\talk2tia.exe"
 {
   "mcpServers": {
     "talk2tia": {
-      "command": "C:\\Program Files\\Talk2Tia\\talk2tia.exe",
+      "command": "talk2tia",
       "env": { "TALK2TIA_TOOLSETS": "all" }
     }
   }
@@ -71,6 +99,9 @@ read at runtime. Talk2Tia looks for it in this order:
   "deny": ["obj_*"],
   // Optional: folder for the temporary files exchanged with TIA Portal (see below).
   "workDirectory": "%USERPROFILE%\\Talk2Tia\\work",
+  // Optional: notification-area icon (default true) and update check ("notify" by default, or "off").
+  "trayIcon": true,
+  "updates": "notify",
   // Optional: PLCs reachable through the CPU Web API, for the diagnostics tools.
   "plcs": {
     "Line1": {
@@ -136,6 +167,8 @@ reachable online, like *Snapshot of the actual values* in the data block editor.
 | `TALK2TIA_CONFIG` | — | Path of the configuration file. |
 | `TALK2TIA_TOOLSETS` | `all` | Comma-separated toolsets to expose: `portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`. Overrides `toolsets` in the file. Fewer tools = less context for the model. |
 | `TALK2TIA_READONLY` | `0` | `1` forces the readonly profile. |
+| `TALK2TIA_TRAY` | `1` | `0` hides the notification-area icon. Overrides `trayIcon`. |
+| `TALK2TIA_UPDATES` | `notify` | `off` disables the update check. Overrides `updates`. |
 | `TALK2TIA_WORKDIR` | see below | Folder for the temporary export/import files exchanged with TIA Portal. Overrides `workDirectory` in the file. |
 | `TALK2TIA_PUBLICAPI_DIR` | from registry | Folder containing `Siemens.Engineering.*.dll` (V21, net48). |
 
@@ -190,12 +223,12 @@ diff.
 ### The talk2tia skill
 
 The repository ships an [Agent Skill](https://github.com/insideapp-srl/talk2tia/tree/main/plugins/talk2tia/skills/talk2tia) with
-guidance for the assistant. Its first topic teaches it to always show these diffs, to keep the drawings intact, to explain
-them and to offer a review before large changes; new topics will be added to the same skill. It is also attached to each
+guidance for the assistant. It teaches it to always show these diffs, to keep the drawings intact, to explain them and to
+offer a review before large changes, and to report problems and ideas to the maintainers (see below). It is also attached to each
 release as `talk2tia-skill.zip`.
 
 - **Claude Code** (recommended): install the Talk2Tia plugin from the repository's marketplace. It adds the skill and
-  registers the MCP server installed by the MSI (`C:\Program Files\Talk2Tia\talk2tia.exe`); if you already added the
+  registers the MCP server installed by the MSI (`talk2tia`, from the PATH); if you already added the
   server by hand with the same path, Claude Code keeps your configuration.
   ```text
   /plugin marketplace add insideapp-srl/talk2tia
@@ -216,9 +249,8 @@ It prepares the report with `portal_feedback_report`, leaving out project conten
 how to send it: as a [GitHub issue](https://github.com/insideapp-srl/talk2tia/issues) or by e-mail to
 [support@insideapp.help](mailto:support@insideapp.help). Nothing is sent without your approval.
 
-The [`talk2tia-feedback`](https://github.com/insideapp-srl/talk2tia/tree/main/plugins/talk2tia/skills/talk2tia-feedback)
-skill guides this; it is part of the Claude Code plugin and attached to each release as `talk2tia-feedback-skill.zip`
-(install it like the `talk2tia` skill). You can also ask directly: *"report this problem to the Talk2Tia developers"*.
+The `talk2tia` skill guides this ([feedback topic](https://github.com/insideapp-srl/talk2tia/blob/main/plugins/talk2tia/skills/talk2tia/feedback.md)).
+You can also ask directly: *"report this problem to the Talk2Tia developers"*.
 
 ## Safety
 

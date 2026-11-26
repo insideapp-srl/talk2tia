@@ -1,8 +1,8 @@
 {
   "name": "talk2tia",
   "displayName": "Talk2Tia",
-  "version": "0.13.0",
-  "description": "Work on Siemens TIA Portal V21 projects with Claude: the Talk2Tia MCP server (installed with the Talk2Tia MSI) the talk2tia skill, which shows SCL diffs and LAD/FBD networks drawn before and after every change, and the talk2tia-feedback skill to report problems and ideas to the maintainers.",
+  "version": "1.0.0",
+  "description": "Work on Siemens TIA Portal V21 projects with Claude: the Talk2Tia MCP server (installed with the Talk2Tia MSI) and the talk2tia skill, which shows SCL diffs and LAD/FBD networks drawn before and after every change and helps report problems and ideas to the maintainers.",
   "author": {
     "name": "InsideApp S.r.l.",
     "url": "https://www.insideapp.it"

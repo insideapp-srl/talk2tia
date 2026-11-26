@@ -57,10 +57,10 @@ not run automatically on fork pull requests.
 
 Maintainers release by pushing a `vX.Y.Z` tag on `main`, after bumping the version in the projects, the installer, the
 website and `plugins/talk2tia/.claude-plugin/plugin.json` (Claude Code updates the plugin only when that version changes). The release workflow builds, tests, signs and publishes
-the installers. `0.x` versions are published as pre-releases.
+the installers. Versions follow SemVer from 1.0.0; unsigned test builds are published as pre-releases.
 
 The installer shows the legal notice from `site/src/content/legal.*.md` and the MIT licence. After changing them, or the
-logos, regenerate `installer/assets` (`License.rtf`, `Dialog.bmp`, `Banner.bmp`) with
+logos, regenerate `installer/assets` (`License.rtf`, `Dialog.bmp`, `Banner.bmp`, `talk2tia.ico`) with
 `node installer/assets/generate.mjs` (needs `npm ci` in `site` first).
 
 ## License
