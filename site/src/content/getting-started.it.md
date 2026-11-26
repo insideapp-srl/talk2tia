@@ -63,7 +63,15 @@ MCP). Anche `portal_status` segnala l'aggiornamento disponibile, così l'assiste
 claude mcp add talk2tia -- talk2tia
 ```
 
-### Claude Desktop (`claude_desktop_config.json`)
+### Claude Desktop
+
+**Con un clic:** scarica `talk2tia-<versione>.mcpb` dall'[ultima release](https://github.com/insideapp-srl/talk2tia/releases/latest)
+e aprilo con un doppio clic (oppure *Impostazioni > Estensioni > Installa estensione*). L'estensione contiene Talk2Tia,
+quindi l'MSI non serve; nelle impostazioni trovi la modalità sola lettura e i gruppi di tool. Nell'estensione il
+controllo aggiornamenti di Talk2Tia è disattivato: per aggiornare installa il `.mcpb` della nuova release. Talk2Tia è
+anche nel [MCP Registry](https://registry.modelcontextprotocol.io) come `io.github.insideapp-srl/talk2tia`.
+
+**Configurazione manuale** (`claude_desktop_config.json`, con l'MSI installato):
 
 ```json
 {

@@ -10,7 +10,7 @@
 
 <p align="center">
   <img alt="Status: stable" src="https://img.shields.io/badge/status-stable-42ba96" />
-  <img alt="Version 1.0.0" src="https://img.shields.io/badge/version-1.0.0-335eea" />
+  <img alt="Version 1.1.0" src="https://img.shields.io/badge/version-1.1.0-335eea" />
   <img alt="TIA Portal V21" src="https://img.shields.io/badge/TIA%20Portal-V21-1b2a4e" />
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-42ba96" />
   <a href="https://ko-fi.com/insideappsrl"><img alt="Support on Ko-fi" src="https://img.shields.io/badge/support-Ko--fi-ff5e5b?logo=kofi&logoColor=white" /></a>
@@ -65,6 +65,8 @@ require explicit confirmation; a download never stops the CPU or re-initializes 
    ```powershell
    talk2tia --doctor
    ```
+   In **Claude Desktop** you can instead double-click `talk2tia-<version>.mcpb` from the release (one-click
+   extension, no MSI needed).
 3. Register the server in Claude Code:
    ```powershell
    claude mcp add talk2tia -- talk2tia

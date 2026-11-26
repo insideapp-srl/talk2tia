@@ -17,6 +17,8 @@ export interface Release {
   date: string;
   msi: ReleaseAsset;
   portable?: ReleaseAsset;
+  /** One-click Claude Desktop extension. */
+  mcpb?: ReleaseAsset;
   checksums?: ReleaseAsset;
 }
 
@@ -52,6 +54,7 @@ async function fetchLatest(): Promise<Release | undefined> {
         date: r.published_at,
         msi,
         portable: asset((n) => n.endsWith('-portable.zip')),
+        mcpb: asset((n) => n.endsWith('.mcpb')),
         checksums: asset((n) => n === 'SHA256SUMS.txt'),
       };
     }

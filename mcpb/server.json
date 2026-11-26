@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.insideapp-srl/talk2tia",
+  "title": "Talk2Tia",
+  "description": "Siemens TIA Portal V21 for AI assistants: SCL/LAD blocks, libraries, tags, compile, diagnostics.",
+  "websiteUrl": "https://talk2tia.insideapp.it",
+  "repository": {
+    "url": "https://github.com/insideapp-srl/talk2tia",
+    "source": "github"
+  },
+  "version": "${VERSION}",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/insideapp-srl/talk2tia/releases/download/v${VERSION}/talk2tia-${VERSION}.mcpb",
+      "fileSha256": "${SHA256}",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
