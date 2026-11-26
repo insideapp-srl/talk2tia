@@ -59,6 +59,9 @@ Maintainers release by pushing a `vX.Y.Z` tag on `main`, after bumping the versi
 website and `plugins/talk2tia/.claude-plugin/plugin.json` (Claude Code updates the plugin only when that version changes). The release workflow builds, tests, signs and publishes
 the installers. Versions follow SemVer from 1.0.0; unsigned test builds are published as pre-releases.
 
+Each release also builds `talk2tia-<version>.mcpb` (`build/mcpb.ps1`, manifest in `mcpb/manifest.json`) and publishes
+`mcpb/server.json` to the MCP Registry through GitHub OIDC (`registry` job).
+
 The installer shows the legal notice from `site/src/content/legal.*.md` and the MIT licence. After changing them, or the
 logos, regenerate `installer/assets` (`License.rtf`, `Dialog.bmp`, `Banner.bmp`, `talk2tia.ico`) with
 `node installer/assets/generate.mjs` (needs `npm ci` in `site` first).

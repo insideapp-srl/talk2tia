@@ -171,6 +171,7 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
         {latest && (
           <p class="download-meta">
             {d.req.meta.replace('{size}', formatSize(latest.msi.size)).replace('{date}', new Date(latest.date).toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }))}
+            {latest.mcpb && <> · <a href={latest.mcpb.url}>{d.req.mcpb}</a></>}
             {latest.portable && <> · <a href={latest.portable.url}>{d.req.portable}</a></>}
             {latest.checksums && <> · <a href={latest.checksums.url}>{d.req.checksums}</a></>}
           </p>

@@ -65,7 +65,15 @@ with `"trayIcon": false` and `"updates": "off"` in the configuration, or `TALK2T
 claude mcp add talk2tia -- talk2tia
 ```
 
-### Claude Desktop (`claude_desktop_config.json`)
+### Claude Desktop
+
+**One click:** download `talk2tia-<version>.mcpb` from the [latest release](https://github.com/insideapp-srl/talk2tia/releases/latest)
+and double-click it (or *Settings > Extensions > Install extension*). The extension contains Talk2Tia, so the MSI is
+not needed; its settings offer the read-only mode and the toolsets. Talk2Tia's own update check is off in the
+extension: install the `.mcpb` of a new release to update. Talk2Tia is also listed in the
+[MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.insideapp-srl/talk2tia`.
+
+**Manual configuration** (`claude_desktop_config.json`, with the MSI installed):
 
 ```json
 {

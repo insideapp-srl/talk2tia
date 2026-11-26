@@ -35,16 +35,18 @@
   <text x="80" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="68" font-weight="700" fill="url(#brand)">with your AI assistant</text>
 
   <text x="80" y="450" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#b3c2da">Open-source MCP server for Siemens TIA Portal Openness:</text>
-  <text x="80" y="492" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#b3c2da">SCL and LAD blocks, libraries, tags, compile and download.</text>
+  <text x="80" y="492" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#b3c2da">SCL and LAD blocks, libraries, diagnostics and visual diffs.</text>
 
   <!-- Chips -->
   <g font-family="Consolas, monospace" font-size="24" fill="#9fb5f7">
-    <rect x="80" y="536" width="170" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
-    <text x="165" y="568" text-anchor="middle">107 tools</text>
-    <rect x="266" y="536" width="150" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
-    <text x="341" y="568" text-anchor="middle">SCL · LAD</text>
-    <rect x="432" y="536" width="150" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
-    <text x="507" y="568" text-anchor="middle">MIT · free</text>
+    <rect x="80" y="536" width="110" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="135" y="568" text-anchor="middle">v1.0</text>
+    <rect x="206" y="536" width="170" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="291" y="568" text-anchor="middle">124 tools</text>
+    <rect x="392" y="536" width="150" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="467" y="568" text-anchor="middle">SCL · LAD</text>
+    <rect x="558" y="536" width="150" height="48" rx="24" fill="#6c8aec" fill-opacity="0.16"/>
+    <text x="633" y="568" text-anchor="middle">MIT · free</text>
   </g>
   <text x="1120" y="568" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#8496b4">talk2tia.insideapp.it</text>
 </svg>

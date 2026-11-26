@@ -1,0 +1,54 @@
+{
+  "manifest_version": "0.3",
+  "name": "talk2tia",
+  "display_name": "Talk2Tia",
+  "version": "0.0.0",
+  "description": "Work on Siemens TIA Portal V21 projects with AI: SCL and LAD blocks, libraries, tags, compile, diagnostics.",
+  "long_description": "Talk2Tia is an open-source MCP server for Siemens TIA Portal V21 (Openness API). The assistant reads and edits SCL and LAD/FBD blocks, data blocks, UDTs and tags, manages libraries, compiles with located errors, compares online/offline, reads CPU diagnostics and shows a diff for every change. Destructive actions always need confirmation. Requires Windows with TIA Portal V21 and the Openness option, and your user in the 'Siemens TIA Openness' group.",
+  "author": {
+    "name": "InsideApp S.r.l.",
+    "url": "https://www.insideapp.it"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/insideapp-srl/talk2tia"
+  },
+  "homepage": "https://talk2tia.insideapp.it",
+  "documentation": "https://talk2tia.insideapp.it/docs/",
+  "support": "https://github.com/insideapp-srl/talk2tia/issues",
+  "icon": "icon.png",
+  "license": "MIT",
+  "keywords": ["tia-portal", "siemens", "plc", "scl", "ladder", "openness", "industrial-automation"],
+  "server": {
+    "type": "binary",
+    "entry_point": "server/talk2tia.exe",
+    "mcp_config": {
+      "command": "${__dirname}/server/talk2tia.exe",
+      "args": [],
+      "env": {
+        "TALK2TIA_READONLY": "${user_config.read_only}",
+        "TALK2TIA_TOOLSETS": "${user_config.toolsets}",
+        "TALK2TIA_UPDATES": "off"
+      }
+    }
+  },
+  "compatibility": {
+    "platforms": ["win32"]
+  },
+  "user_config": {
+    "read_only": {
+      "type": "boolean",
+      "title": "Read-only mode",
+      "description": "Expose only the tools that do not change the project or the PLC.",
+      "default": false,
+      "required": false
+    },
+    "toolsets": {
+      "type": "string",
+      "title": "Toolsets",
+      "description": "Comma-separated toolsets to expose (portal, hardware, plc, online, diagnostics, diagnostics_write, library, hmi, object), or 'all'.",
+      "default": "all",
+      "required": false
+    }
+  }
+}

@@ -27,6 +27,8 @@ jobs:
     name: Build, sign & publish installers
     runs-on: [self-hosted, windows, x64, tia-v21]
     timeout-minutes: 45
+    outputs:
+      signed: ${{ steps.signing.outputs.enabled }}
     defaults:
       run:
         shell: powershell
@@ -96,8 +98,17 @@ jobs:
           Get-ChildItem artifacts/publish -Exclude *.pdb | Compress-Archive -DestinationPath "dist/Talk2Tia-$v-x64-portable.zip"
           # Agent Skill for Claude Code / Claude Desktop (the zip contains the talk2tia folder).
           Compress-Archive -Path plugins/talk2tia/skills/talk2tia -DestinationPath dist/talk2tia-skill.zip
+          # MCP Bundle for one-click install in Claude Desktop, and server.json for the MCP Registry (kept out of dist).
+          ./build/mcpb.ps1 -Version $v -PublishDir artifacts/publish -OutDir dist
+          Move-Item dist/server.json artifacts/server.json -Force
           Get-ChildItem dist | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
             Set-Content dist/SHA256SUMS.txt -Encoding ascii
+
+      - name: Keep server.json for the MCP Registry
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-server-json
+          path: artifacts/server.json
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
@@ -131,3 +142,28 @@ jobs:
           if (-not $env:WINGET_TOKEN) { Write-Host 'WINGET_TOKEN not set: winget submission skipped.'; return }
           $v = '${{ steps.version.outputs.value }}'
           ./build/winget.ps1 -Version $v -Msi "dist/Talk2Tia-$v-x64.msi" -Submit
+
+  # Official MCP Registry (registry.modelcontextprotocol.io): lists the .mcpb of this release under
+  # io.github.insideapp-srl/talk2tia. GitHub OIDC proves the org namespace; no secret needed.
+  registry:
+    name: Publish to the MCP Registry
+    needs: release
+    if: needs.release.outputs.signed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: mcp-server-json
+      - name: Install mcp-publisher
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install mcp-publisher
+          echo "$(brew --prefix)/bin" >> "$GITHUB_PATH"
+      - name: Publish
+        run: |
+          mcp-publisher validate
+          mcp-publisher login github-oidc
+          mcp-publisher publish

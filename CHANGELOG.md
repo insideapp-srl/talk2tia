@@ -8,6 +8,18 @@ Versions `0.x` were public betas; 1.0.0 is the first stable release.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-27
+
+### Added
+
+- One-click Claude Desktop extension: every release ships `talk2tia-<version>.mcpb` (MCP Bundle) with read-only mode
+  and toolsets as settings. The download section of the website links it.
+- Talk2Tia is published to the official MCP Registry as `io.github.insideapp-srl/talk2tia` by the release workflow.
+
+### Changed
+
+- Updated social preview image (v1.0, 124 tools).
+
 ## [1.0.0] - 2026-11-27
 
 First stable release. The tool names and parameters, the configuration file and the SIMATIC SD formats are now covered
@@ -151,7 +163,8 @@ First public beta.
 - Signed MSI installer and portable zip.
 - Website with documentation in English and Italian.
 
-[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/insideapp-srl/talk2tia/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.13.0...v1.0.0
 [0.13.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.11.0...v0.12.0
