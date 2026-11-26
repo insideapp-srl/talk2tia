@@ -7,8 +7,8 @@ reports seriously.
 
 | Version | Supported |
 |---|---|
-| 0.9.x (beta) | ✅ |
-| < 0.9 | ❌ |
+| 1.x | ✅ |
+| 0.x (beta) | ❌ (update to 1.x) |
 
 ## Reporting a vulnerability
 

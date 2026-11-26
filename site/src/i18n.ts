@@ -21,9 +21,9 @@ export function pathWithoutLocale(pathname: string, base: string): string {
 
 const en = {
   beta: {
-    label: 'Public beta',
-    text: 'Talk2Tia v0.14 is in public beta: use it on test projects and expect rough edges.',
-    link: 'Send feedback',
+    label: 'New',
+    text: 'Talk2Tia 1.0 is out: the first stable release, with automatic updates and a per-user installer.',
+    link: "What's new",
   },
   meta: {
     title: 'Talk2Tia — AI MCP server for Siemens TIA Portal V21',
@@ -207,8 +207,8 @@ type Dict = typeof en;
 
 const it: Dict = {
   beta: {
-    label: 'Beta pubblica',
-    text: 'Talk2Tia v0.14 è in beta pubblica: usalo su progetti di prova e aspettati qualche imperfezione.',
+    label: 'Novità',
+    text: 'È uscito Talk2Tia 1.0: la prima versione stabile, con aggiornamenti automatici e installazione per utente.',
     link: 'Invia un feedback',
   },
   meta: {

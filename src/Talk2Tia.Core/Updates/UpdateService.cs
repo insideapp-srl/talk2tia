@@ -161,7 +161,7 @@ public sealed class UpdateService : IDisposable
         return latest;
     }
 
-    /// <summary>The newest non-draft release (pre-releases included: 0.x are betas) that has an MSI.</summary>
+    /// <summary>The newest non-draft release (pre-releases included) that has an MSI.</summary>
     internal static UpdateInfo? PickLatest(string releasesJson)
     {
         using var doc = JsonDocument.Parse(releasesJson);

@@ -105,7 +105,7 @@ jobs:
           tag_name: v${{ steps.version.outputs.value }}
           name: Talk2Tia ${{ steps.version.outputs.value }}
           generate_release_notes: true
-          # 0.x versions are public betas; unsigned test builds are always pre-releases.
+          # 0.x versions were public betas; unsigned test builds are always pre-releases.
           prerelease: ${{ steps.signing.outputs.enabled != 'true' || startsWith(steps.version.outputs.value, '0.') }}
           files: dist/*
 

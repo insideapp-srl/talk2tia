@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <img alt="Status: public beta" src="https://img.shields.io/badge/status-public%20beta-46cdcf" />
-  <img alt="Version 0.14.0" src="https://img.shields.io/badge/version-0.14.0-335eea" />
+  <img alt="Status: stable" src="https://img.shields.io/badge/status-stable-42ba96" />
+  <img alt="Version 1.0.0" src="https://img.shields.io/badge/version-1.0.0-335eea" />
   <img alt="TIA Portal V21" src="https://img.shields.io/badge/TIA%20Portal-V21-1b2a4e" />
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-42ba96" />
   <a href="https://ko-fi.com/insideappsrl"><img alt="Support on Ko-fi" src="https://img.shields.io/badge/support-Ko--fi-ff5e5b?logo=kofi&logoColor=white" /></a>
@@ -23,9 +23,9 @@
   <a href="https://github.com/insideapp-srl/talk2tia/releases">Download</a>
 </p>
 
-> [!WARNING]
-> **Public beta (v0.14).** Talk2Tia is feature-complete but still in beta. Use it on test projects, review every change
-> before saving or downloading to a PLC, and please [report issues](https://github.com/insideapp-srl/talk2tia/issues).
+> [!IMPORTANT]
+> Talk2Tia changes real engineering projects. Review every change before saving or downloading to a PLC, and please
+> [report issues](https://github.com/insideapp-srl/talk2tia/issues) and ideas.
 
 ## What it does
 

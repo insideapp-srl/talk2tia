@@ -1,7 +1,7 @@
 # Talk2Tia — Getting started
 
-> **Public beta (v0.14).** Talk2Tia is feature-complete but still in beta: use it on test projects, review every change
-> before saving or downloading, and please report issues on [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
+> Talk2Tia changes real engineering projects: review every change before saving or downloading, and please report
+> issues and ideas on [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia is an MCP server that lets an AI assistant (Claude Code, Claude Desktop or any MCP client)
 work inside Siemens TIA Portal V21 through the official Openness API.

@@ -12,8 +12,8 @@
   microsoft/winget-pkgs and open the pull request (classic PAT with public_repo, in WINGET_TOKEN).
 
 .EXAMPLE
-  ./build/winget.ps1 -Version 0.14.0 -Msi installer/bin/x64/Release/Talk2Tia-0.14.0-x64.msi
-  ./build/winget.ps1 -Version 0.14.0 -Msi dist/Talk2Tia-0.14.0-x64.msi -Submit
+  ./build/winget.ps1 -Version 1.0.0 -Msi installer/bin/x64/Release/Talk2Tia-1.0.0-x64.msi
+  ./build/winget.ps1 -Version 1.0.0 -Msi dist/Talk2Tia-1.0.0-x64.msi -Submit
 #>
 [CmdletBinding()]
 param(

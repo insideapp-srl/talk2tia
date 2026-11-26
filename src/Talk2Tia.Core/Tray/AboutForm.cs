@@ -131,7 +131,7 @@ public sealed class AboutForm : Form
             g.DrawString("Talk2Tia", title, Brushes.White, x, 24 * s);
             g.DrawString(T.Tagline, sub, Brushes.White, x + 2 * s, 66 * s);
             using var faded = new SolidBrush(Color.FromArgb(215, Color.White));
-            g.DrawString($"{T.VersionLabel} {UpdateService.Current.ToString(3)} · beta", small, faded, x + 2 * s, 88 * s);
+            g.DrawString($"{T.VersionLabel} {UpdateService.Current.ToString(3)}", small, faded, x + 2 * s, 88 * s);
         };
         return header;
     }
