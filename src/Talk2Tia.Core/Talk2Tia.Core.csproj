@@ -15,7 +15,7 @@
     <Company>InsideApp</Company>
     <Copyright>Copyright (c) 2026 InsideApp S.r.l. MIT License.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.13.0</Version>
+    <Version>0.14.0</Version>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <!-- Default install location; override with /p:TiaPublicApiDir=... -->
@@ -54,6 +54,13 @@
       <HintPath>$(TiaPublicApiDir)\Siemens.Engineering.WinCCUnified.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <!-- Notification-area icon (Tray/TrayIcon.cs). -->
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <EmbeddedResource Include="..\..\installer\assets\talk2tia.ico" LogicalName="Talk2Tia.Core.talk2tia.ico" />
   </ItemGroup>
 
   <ItemGroup>

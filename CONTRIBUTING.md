@@ -60,7 +60,7 @@ website and `plugins/talk2tia/.claude-plugin/plugin.json` (Claude Code updates t
 the installers. `0.x` versions are published as pre-releases.
 
 The installer shows the legal notice from `site/src/content/legal.*.md` and the MIT licence. After changing them, or the
-logos, regenerate `installer/assets` (`License.rtf`, `Dialog.bmp`, `Banner.bmp`) with
+logos, regenerate `installer/assets` (`License.rtf`, `Dialog.bmp`, `Banner.bmp`, `talk2tia.ico`) with
 `node installer/assets/generate.mjs` (needs `npm ci` in `site` first).
 
 ## License

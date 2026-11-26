@@ -13,7 +13,8 @@
     <Company>InsideApp</Company>
     <Copyright>Copyright (c) 2026 InsideApp S.r.l. MIT License.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.13.0</Version>
+    <Version>0.14.0</Version>
+    <ApplicationIcon>..\..\installer\assets\talk2tia.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

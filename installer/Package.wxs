@@ -5,7 +5,7 @@
            Manufacturer="InsideApp S.r.l."
            Version="$(Version)"
            UpgradeCode="6f0e8a52-3c1b-4d7e-9a35-2b8c4e71d0a9"
-           Scope="perMachine"
+           Scope="perUserOrMachine"
            Compressed="yes">
 
     <SummaryInformation Description="Talk2Tia — MCP server for Siemens TIA Portal V21 (Openness)" />
@@ -19,6 +19,20 @@
     <Property Id="ARPHELPLINK" Value="https://github.com/insideapp-srl/talk2tia" />
     <Property Id="ARPURLINFOABOUT" Value="https://talk2tia.insideapp.it" />
     <Property Id="ARPCOMMENTS" Value="MCP server for Siemens TIA Portal V21 through the Openness API." />
+    <Icon Id="talk2tia.ico" SourceFile="assets\talk2tia.ico" />
+    <Property Id="ARPPRODUCTICON" Value="talk2tia.ico" />
+
+    <!--
+      Dual-purpose package (one MSI, per user or per machine):
+       - setup UI: the scope page (Ui.wxs) chooses "just me" (default: %LOCALAPPDATA%\Programs\Talk2Tia, no admin rights,
+         silent updates) or "all users" (Program Files, admin rights);
+       - silent: per machine by default (msiexec /i ... /qn); per user with ALLUSERS=2 MSIINSTALLPERUSER=1.
+    -->
+    <Property Id="T2T_MACHINE_EXE">
+      <DirectorySearch Id="MachineInstall" Path="[ProgramFiles64Folder]Talk2Tia" Depth="0">
+        <FileSearch Name="talk2tia.exe" />
+      </DirectorySearch>
+    </Property>
 
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="Talk2Tia" />
@@ -26,7 +40,8 @@
 
     <Feature Id="Main" Title="Talk2Tia" Level="1">
       <ComponentGroupRef Id="AppFiles" />
-      <ComponentRef Id="PathEntry" />
+      <ComponentRef Id="PathEntryMachine" />
+      <ComponentRef Id="PathEntryUser" />
     </Feature>
 
     <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
@@ -36,9 +51,14 @@
       </Files>
     </ComponentGroup>
 
-    <!-- Puts talk2tia.exe on the system PATH so MCP clients can launch it by name. -->
-    <Component Id="PathEntry" Directory="INSTALLFOLDER" Guid="b5d1f4a7-8c2e-4b9d-a613-7e0f2c94d5b8">
+    <!-- Puts talk2tia.exe on the PATH (system or user, following the scope) so MCP clients can launch it by name. -->
+    <Component Id="PathEntryMachine" Directory="INSTALLFOLDER" Guid="b5d1f4a7-8c2e-4b9d-a613-7e0f2c94d5b8"
+               Condition="NOT (ALLUSERS = 2 AND MSIINSTALLPERUSER = 1)">
       <Environment Id="Talk2TiaPath" Name="PATH" Value="[INSTALLFOLDER]" Action="set" Part="last" System="yes" Permanent="no" />
+    </Component>
+    <Component Id="PathEntryUser" Directory="INSTALLFOLDER" Guid="3e9c6b71-2f4d-4a8e-9b05-6c1d7e2f8a43"
+               Condition="ALLUSERS = 2 AND MSIINSTALLPERUSER = 1">
+      <Environment Id="Talk2TiaUserPath" Name="PATH" Value="[INSTALLFOLDER]" Action="set" Part="last" System="no" Permanent="no" />
     </Component>
 
   </Package>

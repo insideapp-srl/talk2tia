@@ -90,7 +90,26 @@ Write-Host "Certificate: $($cert.Subject) (valid until $($cert.NotAfter.ToString
 Write-Host "signtool:    $signtool"
 
 if ($Check) {
-    Write-Host 'Signing prerequisites OK.'
+    # The certificate stays in the store when the SimplySign session expires, but signing then hangs and fails:
+    # sign a throw-away script (no timestamp) with a time limit to prove the cloud key is reachable.
+    $probe = Join-Path $env:TEMP "talk2tia-sign-probe-$PID.ps1"
+    Set-Content $probe "# Talk2Tia signing probe $(Get-Date -Format o)" -Encoding ascii
+    try {
+        $process = Start-Process $signtool -ArgumentList @('sign', '/sha1', $Thumbprint, '/fd', 'SHA256', "`"$probe`"") `
+            -NoNewWindow -PassThru
+        $null = $process.Handle # makes ExitCode available after WaitForExit
+        if (-not $process.WaitForExit(90000)) {
+            $process.Kill()
+            throw 'Test signature timed out: the SimplySign session is not active. Log in to SimplySign Desktop (e-mail + OTP) and run again.'
+        }
+        if ($process.ExitCode -ne 0) {
+            throw "Test signature failed (signtool exit $($process.ExitCode)): log in to SimplySign Desktop (e-mail + OTP) and run again."
+        }
+    }
+    finally {
+        Remove-Item $probe -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host 'Signing prerequisites OK (test signature succeeded).'
     return
 }
 

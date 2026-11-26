@@ -2,6 +2,7 @@
 //   License.rtf  - legal notice (EN + IT) and MIT licence, shown and accepted in the setup
 //   Dialog.bmp   - 493x312 background of the welcome and finish pages
 //   Banner.bmp   - 493x58 top banner of the other pages
+//   talk2tia.ico - executable, tray and Add/Remove Programs icon
 // Usage (sharp comes from the website dependencies):
 //   cd site && npm ci && cd .. && node installer/assets/generate.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -143,5 +144,55 @@ const banner = sharp(Buffer.from(bannerSvg)).composite([
   { input: await png(iconSvg(40), 40), left: 445, top: 9 },
 ]);
 await writeBmp(banner, 'Banner.bmp');
+
+// ---------- talk2tia.ico ----------
+// Executable, tray and Add/Remove Programs icon. Small sizes as 32-bit DIBs (the classic format System.Drawing reads
+// reliably), 256 px as PNG.
+
+async function dibEntry(size) {
+  const { data } = await sharp(iconSvg(size)).resize(size, size).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const maskStride = Math.ceil(size / 32) * 4;
+  const header = Buffer.alloc(40);
+  header.writeUInt32LE(40, 0);
+  header.writeInt32LE(size, 4);
+  header.writeInt32LE(size * 2, 8); // XOR + AND masks
+  header.writeUInt16LE(1, 12);
+  header.writeUInt16LE(32, 14);
+  header.writeUInt32LE(size * size * 4 + maskStride * size, 20);
+  const pixels = Buffer.alloc(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const src = (y * size + x) * 4;
+      const dst = ((size - 1 - y) * size + x) * 4; // bottom-up
+      pixels[dst] = data[src + 2];
+      pixels[dst + 1] = data[src + 1];
+      pixels[dst + 2] = data[src];
+      pixels[dst + 3] = data[src + 3];
+    }
+  }
+  return Buffer.concat([header, pixels, Buffer.alloc(maskStride * size)]);
+}
+
+const sizes = [16, 20, 24, 32, 40, 48, 64, 256];
+const images = [];
+for (const size of sizes) {
+  images.push(size === 256 ? await sharp(iconSvg(256)).resize(256, 256).png().toBuffer() : await dibEntry(size));
+}
+const dir = Buffer.alloc(6 + 16 * sizes.length);
+dir.writeUInt16LE(0, 0);
+dir.writeUInt16LE(1, 2); // icon
+dir.writeUInt16LE(sizes.length, 4);
+let offset = dir.length;
+sizes.forEach((size, i) => {
+  const e = 6 + i * 16;
+  dir.writeUInt8(size === 256 ? 0 : size, e);
+  dir.writeUInt8(size === 256 ? 0 : size, e + 1);
+  dir.writeUInt16LE(1, e + 4); // planes
+  dir.writeUInt16LE(32, e + 6); // bit count
+  dir.writeUInt32LE(images[i].length, e + 8);
+  dir.writeUInt32LE(offset, e + 12);
+  offset += images[i].length;
+});
+writeFileSync(join(here, 'talk2tia.ico'), Buffer.concat([dir, ...images]));
 
 console.log('installer assets generated');

@@ -17,6 +17,10 @@ public sealed class Talk2TiaConfig
     public const string ToolsetsEnv = "TALK2TIA_TOOLSETS";
     public const string ReadOnlyEnv = "TALK2TIA_READONLY";
     public const string WorkDirectoryEnv = "TALK2TIA_WORKDIR";
+    public const string TrayEnv = "TALK2TIA_TRAY";
+    public const string UpdatesEnv = "TALK2TIA_UPDATES";
+    public const string UpdatesNotify = "notify";
+    public const string UpdatesOff = "off";
     public const string ProfileFull = "full";
     public const string ProfileReadOnly = "readonly";
 
@@ -40,6 +44,15 @@ public sealed class Talk2TiaConfig
     /// %LOCALAPPDATA%\Talk2Tia\work, or %USERPROFILE%\Talk2Tia\work when the MCP client is an MSIX app.
     /// </summary>
     public string? WorkDirectory { get; set; }
+
+    /// <summary>Shows the Talk2Tia icon in the Windows notification area (default true).</summary>
+    public bool TrayIcon { get; set; } = true;
+
+    /// <summary>
+    /// "notify" (default): checks GitHub for a newer signed release once a day, downloads and verifies it, and offers to
+    /// install it. "off": no update check.
+    /// </summary>
+    public string? Updates { get; set; }
 
     /// <summary>File the configuration was read from, if any.</summary>
     [JsonIgnore]
@@ -130,19 +143,42 @@ public sealed class Talk2TiaConfig
             WorkDirectory = workDirectory;
         }
 
-        var readOnly = env(ReadOnlyEnv);
-        if (!string.IsNullOrWhiteSpace(readOnly))
+        if (ParseFlag(env(ReadOnlyEnv), ReadOnlyEnv) == true)
         {
-            var value = readOnly!.Trim();
-            if (value is "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase) || value.Equals("yes", StringComparison.OrdinalIgnoreCase))
-            {
-                Profile = ProfileReadOnly;
-            }
-            else if (value is not "0" && !value.Equals("false", StringComparison.OrdinalIgnoreCase) && !value.Equals("no", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new ArgumentException($"Invalid {ReadOnlyEnv} value '{readOnly}'. Use 1/true or 0/false.");
-            }
+            Profile = ProfileReadOnly;
         }
+
+        if (ParseFlag(env(TrayEnv), TrayEnv) is { } tray)
+        {
+            TrayIcon = tray;
+        }
+
+        var updates = env(UpdatesEnv);
+        if (!string.IsNullOrWhiteSpace(updates))
+        {
+            Updates = updates;
+        }
+    }
+
+    private static bool? ParseFlag(string? raw, string name)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return null;
+        }
+
+        var value = raw!.Trim();
+        if (value is "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase) || value.Equals("yes", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (value is "0" || value.Equals("false", StringComparison.OrdinalIgnoreCase) || value.Equals("no", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        throw new ArgumentException($"Invalid {name} value '{raw}'. Use 1/true or 0/false.");
     }
 
     private void Validate()
@@ -151,6 +187,12 @@ public sealed class Talk2TiaConfig
         if (Profile is not ProfileFull and not ProfileReadOnly)
         {
             throw new ArgumentException($"Invalid profile '{Profile}'. Use '{ProfileFull}' or '{ProfileReadOnly}'.");
+        }
+
+        Updates = string.IsNullOrWhiteSpace(Updates) ? UpdatesNotify : Updates!.Trim().ToLowerInvariant();
+        if (Updates is not UpdatesNotify and not UpdatesOff)
+        {
+            throw new ArgumentException($"Invalid updates '{Updates}'. Use '{UpdatesNotify}' or '{UpdatesOff}'.");
         }
 
         foreach (var pair in Plcs ?? new Dictionary<string, PlcEndpoint>())

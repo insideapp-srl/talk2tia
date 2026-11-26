@@ -10,6 +10,8 @@ using ModelContextProtocol.Server;
 using Talk2Tia.Core.Configuration;
 using Talk2Tia.Core.Openness;
 using Talk2Tia.Core.Tools;
+using Talk2Tia.Core.Tray;
+using Talk2Tia.Core.Updates;
 using Talk2Tia.Core.WebApi;
 
 namespace Talk2Tia.Core;
@@ -56,6 +58,11 @@ public static class ServerHost
         host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("talk2tia").LogInformation(
             "Configuration: {Source}; profile {Profile}; {Count} tools; {Plcs} PLC(s) for the Web API",
             config.Source ?? "none", config.Profile, tools.Count, config.Plcs?.Count ?? 0);
+
+        var updates = host.Services.GetRequiredService<UpdateService>();
+        using var tray = config.TrayIcon ? TrayIcon.Start(updates) : null;
+        updates.CheckInBackground();
+
         await host.RunAsync().ConfigureAwait(false);
         return 0;
     }
@@ -73,6 +80,7 @@ public static class ServerHost
     {
         services.AddSingleton(config);
         services.AddSingleton<TiaSession>();
+        services.AddSingleton(sp => new UpdateService(sp.GetRequiredService<Talk2TiaConfig>()));
         services.AddSingleton(sp => new PlcWebApiRegistry(sp.GetRequiredService<Talk2TiaConfig>()));
         var mcp = services.AddMcpServer(options =>
         {

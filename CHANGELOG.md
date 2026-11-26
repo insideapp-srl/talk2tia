@@ -8,6 +8,29 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-11-27
+
+### Added
+
+- Notification-area icon while Talk2Tia runs (one for all sessions): version, active sessions, links to the
+  documentation, website, GitHub, InsideApp and Ko-fi, work folder and *Install update*. Disable it with
+  `"trayIcon": false` or `TALK2TIA_TRAY=0`.
+- Automatic updates: once a day Talk2Tia checks GitHub for a newer release, downloads the MSI, verifies its SHA-256
+  checksum and InsideApp signature, notifies from the icon and in `portal_status`, and installs it on request when every
+  Talk2Tia session has ended. Disable with `"updates": "off"` or `TALK2TIA_UPDATES=off`.
+- The MSI installs *Just for me* (`%LOCALAPPDATA%\Programs\Talk2Tia`, no administrator rights, silent updates) or for
+  *All users* (Program Files). Silent installs stay per machine unless `ALLUSERS=2 MSIINSTALLPERUSER=1` is passed.
+- winget package `InsideApp.Talk2Tia` (user and machine scope), submitted by the release workflow.
+- Talk2Tia icon for the executable, the installer and *Installed apps*.
+
+### Changed
+
+- The feedback guidance is a topic of the `talk2tia` skill instead of a separate `talk2tia-feedback` skill: one skill
+  to install (`talk2tia-skill.zip`, or the Claude Code plugin).
+- The Claude Code plugin and the documentation start the server as `talk2tia` from the PATH instead of the
+  Program Files path, so both installation scopes work.
+- The release workflow tests a real signature before building, so an expired SimplySign session fails in seconds.
+
 ## [0.13.0] - 2026-11-26
 
 ### Added
@@ -125,7 +148,8 @@ First public beta.
 - Signed MSI installer and portable zip.
 - Website with documentation in English and Italian.
 
-[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.10.0...v0.11.0

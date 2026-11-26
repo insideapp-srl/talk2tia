@@ -3,13 +3,13 @@
   <!--
     Builds Talk2Tia-<version>-x64.msi from the published server.
     Usage: dotnet publish src/Talk2Tia.Server -c Release -o artifacts/publish
-           dotnet build installer -c Release -p:Version=0.13.0
+           dotnet build installer -c Release -p:Version=0.14.0
   -->
   <PropertyGroup>
     <OutputType>Package</OutputType>
     <Platform>x64</Platform>
     <InstallerPlatform>x64</InstallerPlatform>
-    <Version Condition="'$(Version)' == ''">0.13.0</Version>
+    <Version Condition="'$(Version)' == ''">0.14.0</Version>
     <OutputName>Talk2Tia-$(Version)-x64</OutputName>
     <PublishDir Condition="'$(PublishDir)' == ''">$(MSBuildThisFileDirectory)..\artifacts\publish\</PublishDir>
     <DefineConstants>Version=$(Version);PublishDir=$(PublishDir)</DefineConstants>

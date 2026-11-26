@@ -9,7 +9,7 @@ namespace Talk2Tia.Tests;
 [Collection(OpennessCollection.Name)]
 public sealed class FeedbackTests
 {
-    private static readonly (string, string)[] Env = { ("Talk2Tia", "0.13.0"), ("Windows", "10.0") };
+    private static readonly (string, string)[] Env = { ("Talk2Tia", "0.14.0"), ("Windows", "10.0") };
 
     private static JsonElement Build(string kind, string description = "Steps: call it.", string? error = null) =>
         JsonSerializer.SerializeToElement(FeedbackReport.Build(kind, "plc_read_block fails", description, "plc_read_block", error, "Claude desktop", Env, connected: true));
@@ -22,7 +22,7 @@ public sealed class FeedbackTests
         var md = r.GetProperty("markdown").GetString()!;
         Assert.Contains("### What happened", md);
         Assert.Contains("`plc_read_block`", md);
-        Assert.Contains("- Talk2Tia: 0.13.0", md);
+        Assert.Contains("- Talk2Tia: 0.14.0", md);
         Assert.Contains("- MCP client: Claude desktop", md);
         var issue = r.GetProperty("githubIssueUrl").GetString()!;
         Assert.StartsWith(FeedbackReport.IssuesUrl + "?title=%5BBug%5D%20plc_read_block%20fails&labels=bug&body=", issue);

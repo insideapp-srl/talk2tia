@@ -96,7 +96,6 @@ jobs:
           Get-ChildItem artifacts/publish -Exclude *.pdb | Compress-Archive -DestinationPath "dist/Talk2Tia-$v-x64-portable.zip"
           # Agent Skill for Claude Code / Claude Desktop (the zip contains the talk2tia folder).
           Compress-Archive -Path plugins/talk2tia/skills/talk2tia -DestinationPath dist/talk2tia-skill.zip
-          Compress-Archive -Path plugins/talk2tia/skills/talk2tia-feedback -DestinationPath dist/talk2tia-feedback-skill.zip
           Get-ChildItem dist | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
             Set-Content dist/SHA256SUMS.txt -Encoding ascii
 
@@ -120,3 +119,15 @@ jobs:
             -Headers @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' } `
             -Body '{"ref":"main"}' -ContentType 'application/json'
           Write-Host 'Website deployment requested.'
+
+      # winget (winget install / upgrade InsideApp.Talk2Tia). Needs the WINGET_TOKEN secret: a classic GitHub token with
+      # public_repo that can fork microsoft/winget-pkgs. Skipped without it; Microsoft reviews every pull request.
+      - name: Submit to winget
+        if: steps.signing.outputs.enabled == 'true'
+        continue-on-error: true
+        env:
+          WINGET_TOKEN: ${{ secrets.WINGET_TOKEN }}
+        run: |
+          if (-not $env:WINGET_TOKEN) { Write-Host 'WINGET_TOKEN not set: winget submission skipped.'; return }
+          $v = '${{ steps.version.outputs.value }}'
+          ./build/winget.ps1 -Version $v -Msi "dist/Talk2Tia-$v-x64.msi" -Submit
