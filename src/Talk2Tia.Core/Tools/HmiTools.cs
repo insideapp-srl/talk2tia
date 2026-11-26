@@ -8,7 +8,6 @@ using Siemens.Engineering;
 using Siemens.Engineering.Hmi;
 using Siemens.Engineering.Hmi.Screen;
 using Siemens.Engineering.Hmi.Tag;
-using Siemens.Engineering.HmiUnified;
 using Talk2Tia.Core.Openness;
 
 namespace Talk2Tia.Core.Tools;
@@ -22,7 +21,7 @@ public sealed class HmiTools(TiaSession tia)
     [Description("Lists the HMI devices (WinCC Comfort/Advanced and WinCC Unified) in the project.")]
     public Task<string> List() => tia.RunAsync(() =>
         Locator.AllSoftware(tia.Project)
-            .Where(s => s.Software is HmiTarget or HmiSoftware)
+            .Where(s => HmiKinds.IsHmi(s.Software))
             .Select(s => new { hmi = s.Name, kind = s.Kind, device = s.Device.Name, typeIdentifier = s.DeviceItem.TypeIdentifier })
             .ToList());
 
@@ -34,7 +33,7 @@ public sealed class HmiTools(TiaSession tia)
         return software switch
         {
             HmiTarget classic => (object)ClassicScreens(classic.ScreenFolder, string.Empty).ToList(),
-            HmiSoftware unified => unified.Screens.Select(s => new { path = s.Name, name = s.Name }).ToList(),
+            _ when HmiKinds.IsUnified(software) => UnifiedHmi.Screens(software),
             _ => throw new McpException("Unsupported HMI type."),
         };
     });
@@ -57,13 +56,7 @@ public sealed class HmiTools(TiaSession tia)
                         table = t.Path,
                         tags = t.Table.Tags.Select(tag => ValueFormatter.ReadAttributes(tag, attrs)).ToList(),
                     }).ToList(),
-                HmiSoftware unified => unified.TagTables
-                    .Where(t => table is null || Locator.NameEquals(t.Name, table))
-                    .Select(t => new
-                    {
-                        table = t.Name,
-                        tags = t.Tags.Select(tag => ValueFormatter.ReadAttributes(tag, attrs)).ToList(),
-                    }).ToList(),
+                _ when HmiKinds.IsUnified(software) => UnifiedHmi.TagTables(software, table, attrs),
                 _ => throw new McpException("Unsupported HMI type."),
             };
         });

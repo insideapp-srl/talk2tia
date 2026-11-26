@@ -20,7 +20,7 @@ internal sealed record SoftwareRef(Device Device, DeviceItem DeviceItem, Softwar
     {
         PlcSoftware => "PLC",
         Siemens.Engineering.Hmi.HmiTarget => "HMI (WinCC Classic/Comfort/Advanced)",
-        Siemens.Engineering.HmiUnified.HmiSoftware => "HMI (WinCC Unified)",
+        _ when HmiKinds.IsUnified(Software) => "HMI (WinCC Unified)",
         _ => Software.GetType().Name,
     };
 }
@@ -87,20 +87,33 @@ internal static class Locator
                ?? throw new McpException($"Device '{name}' not found. Available: {string.Join(", ", AllDevices(project).Select(d => d.Name))}");
     }
 
-    /// <summary>Finds a device item by name anywhere in the project, or "Device/Item" for disambiguation.</summary>
+    /// <summary>
+    /// Finds a device item by name anywhere in the project, or "Device/Item" for disambiguation. Names that contain '/'
+    /// (e.g. "Standard I/O") are matched as a whole first.
+    /// </summary>
     public static DeviceItem FindDeviceItem(Project project, string path)
     {
-        var parts = path.Split(PathSeparator);
-        IEnumerable<Device> devices = AllDevices(project);
-        var itemName = path;
-        if (parts.Length == 2)
+        var trimmed = path.Trim();
+        var devices = AllDevices(project).ToList();
+        var exact = devices.SelectMany(AllItems).FirstOrDefault(i => NameEquals(i.Name, trimmed));
+        if (exact is not null)
         {
-            devices = devices.Where(d => NameEquals(d.Name, parts[0]));
-            itemName = parts[1];
+            return exact;
         }
 
-        return devices.SelectMany(AllItems).FirstOrDefault(i => NameEquals(i.Name, itemName))
-               ?? throw new McpException($"Device item '{path}' not found. Use hw_list_devices to see the hardware tree.");
+        // "Device/Item": the device name is everything before one of the separators.
+        for (var idx = trimmed.IndexOf(PathSeparator); idx > 0; idx = trimmed.IndexOf(PathSeparator, idx + 1))
+        {
+            var deviceName = trimmed.Substring(0, idx);
+            var itemName = trimmed.Substring(idx + 1);
+            var item = devices.Where(d => NameEquals(d.Name, deviceName)).SelectMany(AllItems).FirstOrDefault(i => NameEquals(i.Name, itemName));
+            if (item is not null)
+            {
+                return item;
+            }
+        }
+
+        throw new McpException($"Device item '{path}' not found. Use hw_list_devices to see the hardware tree.");
     }
 
     // ---------- Software containers ----------
@@ -131,7 +144,7 @@ internal static class Locator
     public static SoftwareRef FindHmiRef(Project project, string? name)
     {
         var hmis = AllSoftware(project)
-            .Where(s => s.Software is Siemens.Engineering.Hmi.HmiTarget or Siemens.Engineering.HmiUnified.HmiSoftware)
+            .Where(s => HmiKinds.IsHmi(s.Software))
             .ToList();
         return Pick(hmis, name, "HMI");
     }
@@ -207,16 +220,7 @@ internal static class Locator
                ?? throw new McpException($"Block '{path}' not found. Use plc_list_blocks to see the available blocks.");
     }
 
-    public static PlcBlock? TryFindBlock(PlcSoftware plc, string path)
-    {
-        var (groupPath, name) = SplitLast(path);
-        if (groupPath is not null)
-        {
-            return ResolveBlockGroup(plc, groupPath).Blocks.Find(name);
-        }
-
-        return AllBlocks(plc.BlockGroup).Select(e => e.Block).FirstOrDefault(b => NameEquals(b.Name, name));
-    }
+    public static PlcBlock? TryFindBlock(PlcSoftware plc, string path) => FindByPath(AllBlocks(plc.BlockGroup), b => b.Name, path);
 
     // ---------- Types (UDT) ----------
 
@@ -260,11 +264,8 @@ internal static class Locator
 
     public static PlcType FindType(PlcSoftware plc, string path)
     {
-        var (groupPath, name) = SplitLast(path);
-        var found = groupPath is not null
-            ? ResolveTypeGroup(plc, groupPath).Types.Find(name)
-            : AllTypes(plc.TypeGroup).Select(e => e.Type).FirstOrDefault(t => NameEquals(t.Name, name));
-        return found ?? throw new McpException($"PLC data type '{path}' not found. Use plc_list_types.");
+        return FindByPath(AllTypes(plc.TypeGroup), t => t.Name, path)
+               ?? throw new McpException($"PLC data type '{path}' not found. Use plc_list_types.");
     }
 
     // ---------- Tag tables ----------
@@ -315,11 +316,8 @@ internal static class Locator
                    ?? throw new McpException("The PLC has no default tag table.");
         }
 
-        var (groupPath, name) = SplitLast(path!);
-        var found = groupPath is not null
-            ? ResolveTagTableGroup(plc, groupPath).TagTables.Find(name)
-            : AllTagTables(plc.TagTableGroup).Select(e => e.Table).FirstOrDefault(t => NameEquals(t.Name, name));
-        return found ?? throw new McpException($"Tag table '{path}' not found. Use plc_list_tag_tables.");
+        return FindByPath(AllTagTables(plc.TagTableGroup), t => t.Name, path!)
+               ?? throw new McpException($"Tag table '{path}' not found. Use plc_list_tag_tables.");
     }
 
     // ---------- External sources ----------
@@ -347,6 +345,26 @@ internal static class Locator
     }
 
     // ---------- Helpers ----------
+
+    /// <summary>
+    /// Resolves a name or "Group/Sub/Name" path against a listing whose paths join names with '/'. Object names may
+    /// themselves contain '/' (e.g. "_MachineAlarms_IR/HP"), so the input is not split: the lookup tries the full path
+    /// as listed (the 'path' returned by the list tools), then the object name anywhere, then a trailing part of a path.
+    /// </summary>
+    public static T? FindByPath<T>(IEnumerable<(string Path, T Item)> entries, Func<T, string> nameOf, string path)
+        where T : class
+    {
+        var wanted = path.Trim();
+        if (wanted.Length > 1 && wanted[0] == PathSeparator)
+        {
+            wanted = wanted.Substring(1);
+        }
+
+        var list = entries.ToList();
+        return list.FirstOrDefault(e => NameEquals(e.Path, wanted)).Item
+               ?? list.FirstOrDefault(e => NameEquals(nameOf(e.Item), wanted)).Item
+               ?? list.FirstOrDefault(e => e.Path.EndsWith(PathSeparator + wanted, StringComparison.OrdinalIgnoreCase)).Item;
+    }
 
     public static IEnumerable<string> Segments(string? path) =>
         string.IsNullOrWhiteSpace(path)

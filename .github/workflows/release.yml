@@ -96,6 +96,7 @@ jobs:
           Get-ChildItem artifacts/publish -Exclude *.pdb | Compress-Archive -DestinationPath "dist/Talk2Tia-$v-x64-portable.zip"
           # Agent Skill for Claude Code / Claude Desktop (the zip contains the talk2tia folder).
           Compress-Archive -Path plugins/talk2tia/skills/talk2tia -DestinationPath dist/talk2tia-skill.zip
+          Compress-Archive -Path plugins/talk2tia/skills/talk2tia-feedback -DestinationPath dist/talk2tia-feedback-skill.zip
           Get-ChildItem dist | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
             Set-Content dist/SHA256SUMS.txt -Encoding ascii
 

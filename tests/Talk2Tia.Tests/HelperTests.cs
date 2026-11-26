@@ -18,6 +18,51 @@ public sealed class HelperTests
         Assert.Equal((group, name), Locator.SplitLast(path));
     }
 
+    private sealed record Item(string Name);
+
+    private static readonly (string Path, Item Item)[] Listing =
+    {
+        ("Main", new Item("Main")),
+        ("Alarms/_MachineAlarms_IR/HP", new Item("_MachineAlarms_IR/HP")),
+        ("Motors/Conveyor/FB_Conveyor", new Item("FB_Conveyor")),
+        ("Motors/FB_Conveyor", new Item("FB_Conveyor")),
+    };
+
+    [Theory]
+    [InlineData("Main", "Main")]
+    [InlineData("_MachineAlarms_IR/HP", "Alarms/_MachineAlarms_IR/HP")] // name containing '/'
+    [InlineData("Alarms/_MachineAlarms_IR/HP", "Alarms/_MachineAlarms_IR/HP")] // path as listed
+    [InlineData("/alarms/_machinealarms_ir/hp", "Alarms/_MachineAlarms_IR/HP")]
+    [InlineData("Motors/FB_Conveyor", "Motors/FB_Conveyor")] // exact path wins over the name elsewhere
+    [InlineData("Conveyor/FB_Conveyor", "Motors/Conveyor/FB_Conveyor")] // trailing part of a path
+    public void Names_with_slashes_and_paths_are_resolved(string input, string expectedPath)
+    {
+        var found = Locator.FindByPath(Listing, i => i.Name, input);
+        Assert.Same(Listing.Single(e => e.Path == expectedPath).Item, found);
+    }
+
+    [Fact]
+    public void Unknown_paths_return_null()
+    {
+        Assert.Null(Locator.FindByPath(Listing, i => i.Name, "Alarms/Missing"));
+    }
+
+    [Fact]
+    public void Work_directory_can_be_configured()
+    {
+        try
+        {
+            Workspace.Configure(@"%TEMP%\t2t-work");
+            Assert.Equal(System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(@"%TEMP%\t2t-work")), Workspace.Root);
+            Workspace.Configure(null);
+            Assert.Equal(Workspace.DefaultRoot(), Workspace.Root);
+        }
+        finally
+        {
+            Workspace.Configure(null);
+        }
+    }
+
     [Fact]
     public void Segments_ignore_empty_parts()
     {

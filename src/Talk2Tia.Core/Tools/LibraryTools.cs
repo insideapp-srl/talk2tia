@@ -648,29 +648,28 @@ public sealed class LibraryTools(TiaSession tia)
         return folder;
     }
 
-    private static IEnumerable<LibraryType> AllTypes(LibraryTypeFolder folder)
+    private static IEnumerable<LibraryType> AllTypes(LibraryTypeFolder folder) => TypesWithPath(folder).Select(e => e.Item);
+
+    private static IEnumerable<(string Path, LibraryType Item)> TypesWithPath(LibraryTypeFolder folder, string prefix = "")
     {
         foreach (var t in folder.Types)
         {
-            yield return t;
+            yield return (Locator.Join(prefix, t.Name), t);
         }
 
         foreach (var sub in folder.Folders)
         {
-            foreach (var t in AllTypes(sub))
+            foreach (var e in TypesWithPath(sub, Locator.Join(prefix, sub.Name)))
             {
-                yield return t;
+                yield return e;
             }
         }
     }
 
     private static LibraryType FindType(ILibrary lib, string path)
     {
-        var (folderPath, name) = Locator.SplitLast(path);
-        var found = folderPath is not null
-            ? ResolveTypeFolder(lib.TypeFolder, folderPath, create: false).Types.Find(name)
-            : AllTypes(lib.TypeFolder).FirstOrDefault(t => Locator.NameEquals(t.Name, name));
-        return found ?? throw new McpException($"Library type '{path}' not found. Use lib_browse.");
+        return Locator.FindByPath(TypesWithPath(lib.TypeFolder), t => t.Name, path)
+               ?? throw new McpException($"Library type '{path}' not found. Use lib_browse.");
     }
 
     private static LibraryTypeVersion PickVersion(LibraryType type, string? version)
@@ -686,29 +685,26 @@ public sealed class LibraryTools(TiaSession tia)
                ?? throw new McpException($"Version {version} of '{type.Name}' not found. Versions: {string.Join(", ", type.Versions.Select(v => v.VersionNumber))}");
     }
 
-    private static IEnumerable<MasterCopy> AllMasterCopies(MasterCopyFolder folder)
+    private static IEnumerable<(string Path, MasterCopy Item)> MasterCopiesWithPath(MasterCopyFolder folder, string prefix = "")
     {
         foreach (var m in folder.MasterCopies)
         {
-            yield return m;
+            yield return (Locator.Join(prefix, m.Name), m);
         }
 
         foreach (var sub in folder.Folders)
         {
-            foreach (var m in AllMasterCopies(sub))
+            foreach (var e in MasterCopiesWithPath(sub, Locator.Join(prefix, sub.Name)))
             {
-                yield return m;
+                yield return e;
             }
         }
     }
 
     private static MasterCopy FindMasterCopy(ILibrary lib, string path)
     {
-        var (folderPath, name) = Locator.SplitLast(path);
-        var found = folderPath is not null
-            ? ResolveMasterCopyFolder(lib.MasterCopyFolder, folderPath, create: false).MasterCopies.Find(name)
-            : AllMasterCopies(lib.MasterCopyFolder).FirstOrDefault(m => Locator.NameEquals(m.Name, name));
-        return found ?? throw new McpException($"Master copy '{path}' not found. Use lib_browse.");
+        return Locator.FindByPath(MasterCopiesWithPath(lib.MasterCopyFolder), m => m.Name, path)
+               ?? throw new McpException($"Master copy '{path}' not found. Use lib_browse.");
     }
 
     private static List<ILibraryTypeOrFolderSelection> Selection(ILibrary lib, string[]? items)
@@ -720,21 +716,14 @@ public sealed class LibraryTools(TiaSession tia)
 
         return items.Select(i =>
         {
-            var type = AllTypes(lib.TypeFolder).FirstOrDefault(t => Locator.NameEquals(t.Name, Locator.SplitLast(i).Name));
-            if (type is not null && Locator.SplitLast(i).GroupPath is null)
+            var type = Locator.FindByPath(TypesWithPath(lib.TypeFolder), t => t.Name, i);
+            if (type is not null)
             {
                 return (ILibraryTypeOrFolderSelection)type;
             }
 
-            try
-            {
-                return FindType(lib, i);
-            }
-            catch (McpException)
-            {
-                // Not a type: interpret the path as a folder.
-                return (ILibraryTypeOrFolderSelection)ResolveTypeFolder(lib.TypeFolder, i, create: false);
-            }
+            // Not a type: interpret the path as a folder.
+            return ResolveTypeFolder(lib.TypeFolder, i, create: false);
         }).ToList();
     }
 

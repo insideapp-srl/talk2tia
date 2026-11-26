@@ -281,10 +281,12 @@ public sealed class DiagnosticsTools(TiaSession tia, PlcWebApiRegistry webApi)
         [Description("Data block name or 'Group/Name' path.")] string block,
         [Description(TiaPlcParam)] string? plc = null,
         [Description("Take a new snapshot from the CPU (default) instead of reading the stored one.")] bool create = true,
-        [Description("Also return the SimaticML export of the snapshot.")] bool includeXml = false)
+        [Description("Also return the SimaticML export of the snapshot.")] bool includeXml = false,
+        [Description("When taking a new snapshot, go online automatically if the PLC is offline, and back offline afterwards.")] bool autoOnline = true)
         => tia.RunAsync(() =>
         {
-            var b = Locator.FindBlock(Locator.FindPlc(tia.Project, plc), block);
+            var target = Locator.FindPlcRef(tia.Project, plc);
+            var b = Locator.FindBlock((PlcSoftware)target.Software, block);
             if (b is not DataBlock)
             {
                 throw new McpException($"'{block}' is a {b.GetType().Name}: snapshots are available for data blocks only.");
@@ -292,8 +294,17 @@ public sealed class DiagnosticsTools(TiaSession tia, PlcWebApiRegistry webApi)
 
             if (create)
             {
-                var values = b.GetService<ValueService>() ?? throw new McpException("This data block does not support snapshots.");
-                values.CreateSnapshot();
+                // The ValueService exists only while the PLC is online, hence the online scope.
+                OnlineScope.Run(target, autoOnline, "diag_db_snapshot", () =>
+                {
+                    var values = b.GetService<ValueService>()
+                                 ?? throw new McpException(
+                                     $"TIA Portal offers no snapshot of actual values for '{b.Name}' even online. Check that the " +
+                                     "data block is downloaded and identical online and offline (plc_compare_online), or use " +
+                                     "diag_read_variables through the Web API.");
+                    values.CreateSnapshot();
+                    return true;
+                });
             }
 
             var snapshot = b.GetService<InterfaceSnapshot>() ?? throw new McpException("This data block has no snapshot service.");

@@ -109,6 +109,14 @@ public sealed class ObjectModelTools(TiaSession tia)
                 throw new McpException($"'{path}' is not a composition.");
             }
 
+            // Creating blocks through the generic API has crashed TIA Portal V21: use the dedicated tools.
+            if (composition is Siemens.Engineering.SW.Blocks.PlcBlockComposition)
+            {
+                throw new McpException(
+                    "Blocks cannot be created with obj_create (it can crash TIA Portal). Use plc_create_instance_db for instance " +
+                    "data blocks, plc_create_fb, or plc_write_scl / plc_write_document / plc_write_xml with the block source.");
+            }
+
             var args = parameters ?? new Dictionary<string, JsonElement>();
             var info = composition.GetCreationInfos()
                            .FirstOrDefault(c => c.Type.FullName == type && c.ParameterInfos.Count == args.Count)
@@ -151,14 +159,19 @@ public sealed class ObjectModelTools(TiaSession tia)
             return resolved;
         }
 
+        // Export targets: create the missing folders, TIA Portal fails with "directory does not exist" otherwise.
         if (type == typeof(System.IO.FileInfo))
         {
-            return new System.IO.FileInfo(Environment.ExpandEnvironmentVariables(value.GetString() ?? string.Empty));
+            var file = new System.IO.FileInfo(Environment.ExpandEnvironmentVariables(value.GetString() ?? string.Empty));
+            file.Directory?.Create();
+            return file;
         }
 
         if (type == typeof(System.IO.DirectoryInfo))
         {
-            return new System.IO.DirectoryInfo(Environment.ExpandEnvironmentVariables(value.GetString() ?? string.Empty));
+            var dir = new System.IO.DirectoryInfo(Environment.ExpandEnvironmentVariables(value.GetString() ?? string.Empty));
+            dir.Create();
+            return dir;
         }
 
         return ValueFormatter.ConvertForAttribute(value, new[] { type });

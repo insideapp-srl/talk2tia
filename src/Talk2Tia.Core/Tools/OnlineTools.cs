@@ -125,11 +125,18 @@ public sealed class OnlineTools(TiaSession tia)
     });
 
     [McpServerTool(Name = "plc_compare_online", ReadOnly = true)]
-    [Description("Compares the offline program with the PLC (online). Lists the objects that differ.")]
+    [Description("Compares the offline program with the PLC (online). Lists the objects that differ. If the PLC is offline " +
+                 "it goes online with the configured connection, compares and goes back offline (autoOnline=false to disable).")]
     public Task<string> CompareOnline(
         [Description(PlcParam)] string? plc = null,
-        [Description("Also list identical objects.")] bool includeIdentical = false)
-        => tia.RunAsync(() => FormatCompare(Locator.FindPlc(tia.Project, plc).CompareToOnline(), includeIdentical));
+        [Description("Also list identical objects.")] bool includeIdentical = false,
+        [Description("Go online automatically when the PLC is offline, and back offline afterwards.")] bool autoOnline = true)
+        => tia.RunAsync(() =>
+        {
+            var target = Locator.FindPlcRef(tia.Project, plc);
+            return OnlineScope.Run(target, autoOnline, "plc_compare_online",
+                () => FormatCompare(((Siemens.Engineering.SW.PlcSoftware)target.Software).CompareToOnline(), includeIdentical));
+        });
 
     [McpServerTool(Name = "plc_compare", ReadOnly = true)]
     [Description("Compares the program of two PLCs in the project (offline/offline).")]
