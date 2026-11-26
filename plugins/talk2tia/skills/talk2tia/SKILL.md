@@ -21,3 +21,5 @@ this skill adds how to present the work to the user. Read the topic file that ma
 - Tools marked destructive that act on the plant (download, operating mode, writing variables of a running CPU) need the
   user's explicit approval every time.
 - The project is not saved until `project_save`: say so when you finish a batch of changes.
+- When a Talk2Tia tool fails unexpectedly, needs a workaround or lacks a feature, finish the task and then offer once to
+  report it to the maintainers (skill `talk2tia-feedback`, tool `portal_feedback_report`).

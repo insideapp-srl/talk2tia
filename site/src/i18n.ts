@@ -22,7 +22,7 @@ export function pathWithoutLocale(pathname: string, base: string): string {
 const en = {
   beta: {
     label: 'Public beta',
-    text: 'Talk2Tia v0.12 is in public beta: use it on test projects and expect rough edges.',
+    text: 'Talk2Tia v0.13 is in public beta: use it on test projects and expect rough edges.',
     link: 'Send feedback',
   },
   meta: {
@@ -90,7 +90,7 @@ const en = {
     all: `See all ${stats.tools} tools →`,
     allText: 'Names, descriptions and risk level of every tool.',
     items: [
-      { id: 'portal', name: 'Session & project', count: 16, text: 'Attach to an open TIA Portal or start it headless; open, create, save, archive and retrieve projects.' },
+      { id: 'portal', name: 'Session & project', count: 17, text: 'Attach to an open TIA Portal or start it headless; open, create, save, archive and retrieve projects.' },
       { id: 'plc', name: 'PLC program', count: 37, text: 'Blocks, groups, UDTs, tags, constants, external sources, cross references.' },
       { id: 'library', name: 'Libraries', count: 25, text: 'Global and project libraries, types, versions, master copies and synchronisation.' },
       { id: 'hardware', name: 'Hardware', count: 11, text: 'Device tree, catalog, modules, subnets and network nodes.' },
@@ -208,7 +208,7 @@ type Dict = typeof en;
 const it: Dict = {
   beta: {
     label: 'Beta pubblica',
-    text: 'Talk2Tia v0.12 è in beta pubblica: usalo su progetti di prova e aspettati qualche imperfezione.',
+    text: 'Talk2Tia v0.13 è in beta pubblica: usalo su progetti di prova e aspettati qualche imperfezione.',
     link: 'Invia un feedback',
   },
   meta: {
@@ -276,7 +276,7 @@ const it: Dict = {
     all: `Vedi tutti i ${stats.tools} tool →`,
     allText: 'Nomi, descrizioni e livello di rischio di ogni tool.',
     items: [
-      { id: 'portal', name: 'Sessione e progetto', count: 16, text: 'Attach a TIA aperto o avvio headless, apri, crea, salva, archivia e recupera progetti.' },
+      { id: 'portal', name: 'Sessione e progetto', count: 17, text: 'Attach a TIA aperto o avvio headless, apri, crea, salva, archivia e recupera progetti.' },
       { id: 'plc', name: 'Programma PLC', count: 37, text: 'Blocchi, gruppi, UDT, tag, costanti, sorgenti esterne, riferimenti incrociati.' },
       { id: 'library', name: 'Librerie', count: 25, text: 'Librerie globali e di progetto, tipi, versioni, master copy e sincronizzazione.' },
       { id: 'hardware', name: 'Hardware', count: 11, text: 'Albero dispositivi, catalogo, moduli, subnet e nodi di rete.' },

@@ -19,7 +19,7 @@ export function url(path: string): string {
 }
 
 export const stats = {
-  tools: 123,
+  tools: 124,
   toolsets: 9,
 };
 

@@ -21,7 +21,7 @@ public static class ServerHost
     /// <summary>Tool classes grouped by toolset name. Selected with the configuration file or TALK2TIA_TOOLSETS (default: all).</summary>
     public static readonly IReadOnlyDictionary<string, Type[]> Toolsets = new Dictionary<string, Type[]>(StringComparer.OrdinalIgnoreCase)
     {
-        ["portal"] = new[] { typeof(PortalTools), typeof(ProjectTools) },
+        ["portal"] = new[] { typeof(PortalTools), typeof(ProjectTools), typeof(FeedbackTools) },
         ["hardware"] = new[] { typeof(HardwareTools) },
         ["plc"] = new[] { typeof(BlockTools), typeof(TypeTools), typeof(TagTools), typeof(ExternalSourceTools) },
         ["online"] = new[] { typeof(CompileTools), typeof(OnlineTools) },
@@ -34,10 +34,10 @@ public static class ServerHost
 
     public static async Task<int> RunAsync(string[] args)
     {
-        Workspace.CleanupStale();
-
         var options = CommandLine.Parse(args);
         var config = Talk2TiaConfig.Load(options.ConfigPath);
+        Workspace.Configure(config.WorkDirectory);
+        Workspace.CleanupStale();
         if (options.ReadOnly)
         {
             config.Profile = Talk2TiaConfig.ProfileReadOnly;

@@ -67,6 +67,8 @@ public static class Doctor
 
         var ok = Check("Configuration", true, config.Source ?? "no file (defaults)");
         Check("Tools exposed", true, $"{tools.Count} of {ToolPolicy.Catalog.Count}, profile '{config.Profile}'");
+        Workspace.Configure(config.WorkDirectory);
+        ok &= CheckWorkDirectory(config);
         using var registry = new PlcWebApiRegistry(config);
         foreach (var name in registry.Endpoints.Keys)
         {
@@ -85,6 +87,23 @@ public static class Doctor
         }
 
         return ok;
+    }
+
+    private static bool CheckWorkDirectory(Talk2TiaConfig config)
+    {
+        var origin = config.WorkDirectory is null
+            ? Workspace.RunsInPackage() ? "default, MSIX client detected" : "default"
+            : "configured";
+        try
+        {
+            using var ws = new Workspace();
+            System.IO.File.WriteAllText(ws.PathOf("probe.txt"), "ok");
+            return Check("Work directory", true, $"{Workspace.Root} ({origin})");
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            return Check("Work directory", false, $"{Workspace.Root} ({origin}): {ex.Message}");
+        }
     }
 
     private static bool Check(string name, bool passed, string detail)

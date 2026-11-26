@@ -62,5 +62,13 @@ Safety rules
 
 Anything without a dedicated tool can be reached through the generic object-model tools (obj_browse, obj_get,
 obj_set, obj_invoke, obj_create): every Openness object exposes its compositions, attributes and actions.
+
+Feedback to the maintainers
+- When a Talk2Tia tool fails in a way that looks like a bug, when you need a workaround (generic obj_* tools, another
+  format) for something a dedicated tool should do, or when a missing feature blocks the user, finish the user's task
+  first, then offer once to report it. With the user's approval call portal_feedback_report and show the draft: the user
+  sends it as a GitHub issue or by e-mail to support@insideapp.help. Do not offer it again for the same problem.
+- Keep reports free of project content (code, block and tag names, IP addresses, customer names) unless the user
+  explicitly approves including it.
 """;
 }

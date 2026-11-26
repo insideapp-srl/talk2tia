@@ -1,4 +1,4 @@
-> **Beta pubblica (v0.12).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
+> **Beta pubblica (v0.13).** Talk2Tia è completo ma ancora in beta: usalo su progetti di prova, verifica ogni modifica
 > prima di salvare o scaricare, e segnala i problemi su [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia è un server MCP che permette a un assistente AI (Claude Code, Claude Desktop o qualunque client MCP)
@@ -67,6 +67,8 @@ leggere in runtime. Talk2Tia lo cerca in quest'ordine:
   "allow": ["plc_compile"],
   // Facoltativo: tool tolti in ogni caso. Deny vince sempre.
   "deny": ["obj_*"],
+  // Facoltativo: cartella dei file temporanei scambiati con TIA Portal (vedi sotto).
+  "workDirectory": "%USERPROFILE%\\Talk2Tia\\work",
   // Facoltativo: PLC raggiungibili tramite la Web API della CPU, per i tool di diagnostica.
   "plcs": {
     "Linea1": {
@@ -133,7 +135,13 @@ online, come *Snapshot dei valori attuali* nell'editor della DB.
 | `TALK2TIA_CONFIG` | — | Percorso del file di configurazione. |
 | `TALK2TIA_TOOLSETS` | `all` | Gruppi di tool da esporre, separati da virgola: `portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`. Sostituisce `toolsets` del file. Meno tool = meno contesto per il modello. |
 | `TALK2TIA_READONLY` | `0` | `1` forza il profilo sola lettura. |
+| `TALK2TIA_WORKDIR` | vedi sotto | Cartella dei file temporanei di esportazione/importazione scambiati con TIA Portal. Sostituisce `workDirectory` del file. |
 | `TALK2TIA_PUBLICAPI_DIR` | dal registro | Cartella con `Siemens.Engineering.*.dll` (V21, net48). |
+
+TIA Portal legge e scrive i file esportati nella cartella di lavoro, che quindi deve essere una cartella reale per
+entrambi i processi. Il default è `%LOCALAPPDATA%\Talk2Tia\work`. Quando il client MCP è un'app MSIX (per esempio
+l'app desktop di Claude installata dal Microsoft Store), Windows reindirizza AppData su una copia privata che TIA Portal
+non vede: in quel caso Talk2Tia usa `%USERPROFILE%\Talk2Tia\work`. `talk2tia --doctor` mostra la cartella in uso.
 
 ## Prima sessione
 
@@ -200,6 +208,17 @@ spiegarli e a proporre un controllo prima delle modifiche grandi; i prossimi arg
 
 I disegni sono testo semplice, quindi si vedono uguali in tutti i client, terminale compreso. Il report HTML è facoltativo
 e viene creato solo su richiesta.
+
+### Segnalare problemi e idee
+
+Quando un tool di Talk2Tia fallisce, richiede un workaround o manca una funzione che ti serve, l'assistente propone (una
+volta sola) di segnalarlo. Prepara la segnalazione con `portal_feedback_report`, senza contenuti del progetto se non li
+approvi, e scegli tu come inviarla: come [issue su GitHub](https://github.com/insideapp-srl/talk2tia/issues) o per e-mail
+a [support@insideapp.help](mailto:support@insideapp.help). Nulla viene inviato senza la tua approvazione.
+
+La guida è la skill [`talk2tia-feedback`](https://github.com/insideapp-srl/talk2tia/tree/main/plugins/talk2tia/skills/talk2tia-feedback),
+inclusa nel plugin per Claude Code e allegata a ogni release come `talk2tia-feedback-skill.zip` (si installa come la
+skill `talk2tia`). Puoi anche chiederlo direttamente: *"segnala questo problema agli sviluppatori di Talk2Tia"*.
 
 ## Sicurezza
 

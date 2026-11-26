@@ -130,16 +130,18 @@ public sealed class ConfigurationTests
     public void Environment_overrides_the_file()
     {
         var path = Path.Combine(Path.GetTempPath(), $"talk2tia-test-{Guid.NewGuid():N}.json");
-        File.WriteAllText(path, "{ \"profile\": \"full\", \"toolsets\": [\"library\"] }");
+        File.WriteAllText(path, "{ \"profile\": \"full\", \"toolsets\": [\"library\"], \"workDirectory\": \"C:\\file\" }");
         try
         {
             var config = Talk2TiaConfig.Load(null, Env(
                 (Talk2TiaConfig.ConfigEnv, path),
                 (Talk2TiaConfig.ReadOnlyEnv, "1"),
-                (Talk2TiaConfig.ToolsetsEnv, "plc,diagnostics")));
+                (Talk2TiaConfig.ToolsetsEnv, "plc,diagnostics"),
+                (Talk2TiaConfig.WorkDirectoryEnv, @"D:\Work")));
             Assert.Equal(path, config.Source);
             Assert.True(config.IsReadOnly);
             Assert.Equal(new[] { "plc", "diagnostics" }, config.Toolsets);
+            Assert.Equal(@"D:\Work", config.WorkDirectory);
         }
         finally
         {

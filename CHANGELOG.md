@@ -8,6 +8,33 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-26
+
+### Added
+
+- `talk2tia-feedback` skill and `portal_feedback_report` tool: when a tool fails, needs a workaround or lacks a feature,
+  the assistant offers once to report it and prepares a report with the environment (and no project content unless the
+  user approves). The user sends it as a GitHub issue or by e-mail to support@insideapp.help. The skill is in the Claude
+  Code plugin and attached to releases as `talk2tia-feedback-skill.zip`.
+- Configurable work directory for the files exchanged with TIA Portal: `workDirectory` in the configuration or
+  `TALK2TIA_WORKDIR`; `talk2tia --doctor` shows the folder in use.
+- `plc_compare_online` and `diag_db_snapshot` go online automatically when the PLC is offline and back offline afterwards
+  (`autoOnline=false` to disable).
+
+### Fixed
+
+- Exports and imports failed with "The specified directory does not exist" when the MCP client is an MSIX app (Claude
+  desktop app): Windows redirected the AppData work folder to a copy TIA Portal cannot see. Talk2Tia now detects MSIX
+  clients and uses `%USERPROFILE%\Talk2Tia\work`.
+- Blocks, types, tag tables, library types, master copies and device items whose name contains `/` (e.g.
+  `_MachineAlarms_IR/HP`, `Standard I/O`) were read as group paths and not found. Names are now matched as a whole
+  first, and the `path` returned by the list tools is accepted as is.
+- `obj_invoke` creates the missing destination folders for file and directory parameters (e.g. `ExportAsDocuments`).
+- `obj_create` refuses to create blocks, which crashed TIA Portal, and points to `plc_create_instance_db`,
+  `plc_create_fb` and the `plc_write_*` tools.
+- `diag_db_snapshot` reported that data blocks do not support snapshots when the PLC was offline.
+- `hmi_list`, `hmi_list_screens` and `hmi_list_tags` failed on PCs without the WinCC Unified option (missing assembly).
+
 ### Changed
 
 - Website download buttons start the download of the latest signed MSI directly instead of opening the GitHub
@@ -98,7 +125,8 @@ First public beta.
 - Signed MSI installer and portable zip.
 - Website with documentation in English and Italian.
 
-[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/insideapp-srl/talk2tia/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/insideapp-srl/talk2tia/compare/v0.9.0...v0.10.0

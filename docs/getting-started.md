@@ -1,6 +1,6 @@
 # Talk2Tia — Getting started
 
-> **Public beta (v0.12).** Talk2Tia is feature-complete but still in beta: use it on test projects, review every change
+> **Public beta (v0.13).** Talk2Tia is feature-complete but still in beta: use it on test projects, review every change
 > before saving or downloading, and please report issues on [GitHub](https://github.com/insideapp-srl/talk2tia/issues).
 
 Talk2Tia is an MCP server that lets an AI assistant (Claude Code, Claude Desktop or any MCP client)
@@ -69,6 +69,8 @@ read at runtime. Talk2Tia looks for it in this order:
   "allow": ["plc_compile"],
   // Optional: tools removed in any case. Deny always wins.
   "deny": ["obj_*"],
+  // Optional: folder for the temporary files exchanged with TIA Portal (see below).
+  "workDirectory": "%USERPROFILE%\\Talk2Tia\\work",
   // Optional: PLCs reachable through the CPU Web API, for the diagnostics tools.
   "plcs": {
     "Line1": {
@@ -134,7 +136,13 @@ reachable online, like *Snapshot of the actual values* in the data block editor.
 | `TALK2TIA_CONFIG` | — | Path of the configuration file. |
 | `TALK2TIA_TOOLSETS` | `all` | Comma-separated toolsets to expose: `portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`. Overrides `toolsets` in the file. Fewer tools = less context for the model. |
 | `TALK2TIA_READONLY` | `0` | `1` forces the readonly profile. |
+| `TALK2TIA_WORKDIR` | see below | Folder for the temporary export/import files exchanged with TIA Portal. Overrides `workDirectory` in the file. |
 | `TALK2TIA_PUBLICAPI_DIR` | from registry | Folder containing `Siemens.Engineering.*.dll` (V21, net48). |
+
+TIA Portal reads and writes the exported files in the work directory, so it must be a real folder for both processes.
+The default is `%LOCALAPPDATA%\Talk2Tia\work`. When the MCP client is an MSIX app (for example the Claude desktop app
+installed from the Microsoft Store), Windows redirects AppData to a private copy that TIA Portal cannot see, so Talk2Tia
+uses `%USERPROFILE%\Talk2Tia\work` instead. `talk2tia --doctor` shows the folder in use.
 
 ## First session
 
@@ -200,6 +208,17 @@ release as `talk2tia-skill.zip`.
 
 The drawings are plain text, so they look the same in every client, including the terminal. An HTML report is optional
 and made only on request.
+
+### Reporting problems and ideas
+
+When a Talk2Tia tool fails, needs a workaround or lacks a feature you need, the assistant offers (once) to report it.
+It prepares the report with `portal_feedback_report`, leaving out project content unless you approve it, and you choose
+how to send it: as a [GitHub issue](https://github.com/insideapp-srl/talk2tia/issues) or by e-mail to
+[support@insideapp.help](mailto:support@insideapp.help). Nothing is sent without your approval.
+
+The [`talk2tia-feedback`](https://github.com/insideapp-srl/talk2tia/tree/main/plugins/talk2tia/skills/talk2tia-feedback)
+skill guides this; it is part of the Claude Code plugin and attached to each release as `talk2tia-feedback-skill.zip`
+(install it like the `talk2tia` skill). You can also ask directly: *"report this problem to the Talk2Tia developers"*.
 
 ## Safety
 

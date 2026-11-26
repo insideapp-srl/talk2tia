@@ -1,6 +1,6 @@
 # Talk2Tia — Tool catalog
 
-123 tools grouped in toolsets. Choose toolsets, a readonly profile and single tools with the configuration file or the
+124 tools grouped in toolsets. Choose toolsets, a readonly profile and single tools with the configuration file or the
 `TALK2TIA_TOOLSETS` environment variable (comma separated:
 `portal,hardware,plc,online,diagnostics,diagnostics_write,library,hmi,object`; default: all). `portal` is always enabled.
 See *Configuration* in the getting started guide.
@@ -15,6 +15,7 @@ the RO tools plus `portal_attach`, `portal_start`, `portal_disconnect`, `project
 | Tool | | Description |
 |---|---|---|
 | `portal_status` | RO | Shows whether Talk2Tia is connected to TIA Portal, the connection mode and the open projects. |
+| `portal_feedback_report` | RO | Prepares a bug report or improvement request for the Talk2Tia maintainers: Markdown with the environment, a prefilled GitHub issue link and an e-mail link to support@insideapp.help. Nothing is sent: the user chooses whether and how. |
 | `portal_list_instances` | RO | Lists the running TIA Portal processes with their id, mode and open project. |
 | `portal_attach` |  | Attaches to a running TIA Portal instance. The user must confirm the Openness access dialog in TIA Portal. Without processId, attaches to the only running instance. |
 | `portal_start` |  | Starts a new TIA Portal instance owned by Talk2Tia. Use withUserInterface=false for headless automation (faster). |
@@ -125,7 +126,7 @@ the RO tools plus `portal_attach`, `portal_start`, `portal_disconnect`, `project
 | `online_state` | RO | Returns the online state of a PLC (Offline, Online, NotReachable, ...). |
 | `online_go_online` |  | Establishes an online connection to the PLC using the configured connection. |
 | `online_go_offline` |  | Closes the online connection to the PLC. |
-| `plc_compare_online` | RO | Compares the offline program with the PLC (online). Lists the objects that differ. |
+| `plc_compare_online` | RO | Compares the offline program with the PLC (online). Lists the objects that differ. If the PLC is offline it goes online with the configured connection, compares and goes back offline (autoOnline=false to disable). |
 | `plc_compare` | RO | Compares the program of two PLCs in the project (offline/offline). |
 | `plc_download` | ⚠ | Downloads to the real PLC using the configured online connection. This changes the running plant: ALWAYS ask the user first and pass confirm=true. options: Software (default), SoftwareOnlyChanges, Hardware, or 'Hardware,Software'. The CPU is stopped only if allowStop=true; data blocks are re-initialized only if reinitializeDataBlocks=true. |
 
@@ -144,7 +145,7 @@ Runtime data through the CPU Web API (PLCs declared in the configuration file) a
 | `diag_webapi_methods` | RO | Lists the Web API methods supported by the CPU firmware and the rights of the configured user. Use it to find out which diagnostics are available on a given CPU. |
 | `diag_list_watch_tables` | RO | Lists the watch tables of a PLC in the TIA project (with group paths) and their number of entries. |
 | `diag_watch_table` | RO | Returns the entries of a watch table of the TIA project and, with monitor=true (default), reads their current values from the CPU through the Web API, like 'Monitor all' in TIA Portal. Entries with only an absolute address cannot be read through the Web API. |
-| `diag_db_snapshot` |  | Takes a snapshot of the actual values of a data block from the CPU through TIA Portal (the PLC must be reachable online) and returns them. With create=false returns the last snapshot stored in the project. Works without the Web API. The snapshot is stored in the offline project; the PLC is not changed. |
+| `diag_db_snapshot` |  | Takes a snapshot of the actual values of a data block from the CPU through TIA Portal (the PLC must be reachable online; if it is offline Talk2Tia goes online and back offline) and returns them. With create=false returns the last snapshot stored in the project. Works without the Web API. The snapshot is stored in the offline project; the PLC is not changed. |
 
 ## Runtime actions (toolset: diagnostics_write)
 

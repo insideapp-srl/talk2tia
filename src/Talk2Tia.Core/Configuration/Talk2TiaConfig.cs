@@ -16,6 +16,7 @@ public sealed class Talk2TiaConfig
     public const string ConfigEnv = "TALK2TIA_CONFIG";
     public const string ToolsetsEnv = "TALK2TIA_TOOLSETS";
     public const string ReadOnlyEnv = "TALK2TIA_READONLY";
+    public const string WorkDirectoryEnv = "TALK2TIA_WORKDIR";
     public const string ProfileFull = "full";
     public const string ProfileReadOnly = "readonly";
 
@@ -33,6 +34,12 @@ public sealed class Talk2TiaConfig
 
     /// <summary>PLCs reachable through the CPU Web API, keyed by a name used in the diagnostics tools.</summary>
     public Dictionary<string, PlcEndpoint>? Plcs { get; set; }
+
+    /// <summary>
+    /// Folder for the temporary export/import files exchanged with TIA Portal (environment variables allowed). Default:
+    /// %LOCALAPPDATA%\Talk2Tia\work, or %USERPROFILE%\Talk2Tia\work when the MCP client is an MSIX app.
+    /// </summary>
+    public string? WorkDirectory { get; set; }
 
     /// <summary>File the configuration was read from, if any.</summary>
     [JsonIgnore]
@@ -115,6 +122,12 @@ public sealed class Talk2TiaConfig
         if (!string.IsNullOrWhiteSpace(toolsets))
         {
             Toolsets = toolsets!.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+        }
+
+        var workDirectory = env(WorkDirectoryEnv);
+        if (!string.IsNullOrWhiteSpace(workDirectory))
+        {
+            WorkDirectory = workDirectory;
         }
 
         var readOnly = env(ReadOnlyEnv);
