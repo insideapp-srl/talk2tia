@@ -303,6 +303,7 @@ code, pre, kbd { font-family: var(--mono); font-size: 0.875em; }
 .hero h1 strong { font-weight: 700; color: var(--link); }
 .hero .lead { margin: 1.25rem 0 2rem; max-width: 34rem; }
 .hero-note { margin-top: 1rem; font-size: 0.9375rem; color: var(--text-muted); }
+.download-meta { margin-top: 0.875rem; font-size: 0.875rem; color: var(--text-muted); }
 .hero-blob {
   position: absolute;
   inset: auto -10% -40% auto;

@@ -35,6 +35,8 @@ jobs:
           # Custom domain (site/public/CNAME): served from the root, no base path.
           SITE_URL: https://talk2tia.insideapp.it
           SITE_BASE: /
+          # Reads the latest release for the direct download links (site/src/release.ts).
+          GITHUB_TOKEN: ${{ github.token }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist

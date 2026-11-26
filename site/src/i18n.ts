@@ -121,6 +121,10 @@ const en = {
       'An MCP client: Claude Code, Claude Desktop or another compatible one',
     ],
     latest: 'Download the latest version',
+    msi: 'Download Talk2Tia {version}',
+    meta: 'Signed Windows installer (MSI, {size}) · released {date}',
+    portable: 'Portable zip',
+    checksums: 'SHA-256 checksums',
     all: 'All releases',
   },
   faq: {
@@ -303,6 +307,10 @@ const it: Dict = {
       'Un client MCP: Claude Code, Claude Desktop o un altro compatibile',
     ],
     latest: "Scarica l'ultima versione",
+    msi: 'Scarica Talk2Tia {version}',
+    meta: 'Installer Windows firmato (MSI, {size}) · pubblicato il {date}',
+    portable: 'Zip portabile',
+    checksums: 'Checksum SHA-256',
     all: 'Tutte le release',
   },
   faq: {
