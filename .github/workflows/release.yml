@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # redeploy the website after publishing
 
 jobs:
   release:
@@ -107,3 +108,14 @@ jobs:
           # 0.x versions are public betas; unsigned test builds are always pre-releases.
           prerelease: ${{ steps.signing.outputs.enabled != 'true' || startsWith(steps.version.outputs.value, '0.') }}
           files: dist/*
+
+      # The website links the latest MSI directly (site/src/release.ts): rebuild it now that the release exists.
+      # A release created with GITHUB_TOKEN does not trigger other workflows, but workflow_dispatch does.
+      - name: Redeploy website
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/pages.yml/dispatches" `
+            -Headers @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' } `
+            -Body '{"ref":"main"}' -ContentType 'application/json'
+          Write-Host 'Website deployment requested.'

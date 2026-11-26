@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { links, stats, url } from '../site';
+import { formatSize, latest } from '../release';
 import { localePath, t, type Lang } from '../i18n';
 
 interface Props {
@@ -162,9 +163,18 @@ $env:TALK2TIA_TOOLSETS = <span class="s">"plc,library"</span></pre>
         <h3 style="margin-top:1rem">{d.req.title}</h3>
         <ul class="check-list">{d.req.items.map((i) => <li>{i}</li>)}</ul>
         <div class="btn-row" style="margin-top:1.75rem">
-          <a class="btn btn-primary" href={links.download}>{d.req.latest}</a>
+          <a class="btn btn-primary" href={links.download}>
+            {latest ? d.req.msi.replace('{version}', latest.version) : d.req.latest}
+          </a>
           <a class="btn btn-soft" href={links.releases}>{d.req.all}</a>
         </div>
+        {latest && (
+          <p class="download-meta">
+            {d.req.meta.replace('{size}', formatSize(latest.msi.size)).replace('{date}', new Date(latest.date).toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }))}
+            {latest.portable && <> · <a href={latest.portable.url}>{d.req.portable}</a></>}
+            {latest.checksums && <> · <a href={latest.checksums.url}>{d.req.checksums}</a></>}
+          </p>
+        )}
       </div>
     </div>
   </section>

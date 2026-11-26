@@ -8,6 +8,12 @@ Versions `0.x` are public betas.
 
 ## [Unreleased]
 
+### Changed
+
+- Website download buttons start the download of the latest signed MSI directly instead of opening the GitHub
+  releases page; the download section shows version, size, release date, portable zip and checksums. The release
+  workflow redeploys the website after publishing.
+
 ## [0.12.0] - 2026-11-25
 
 ### Added

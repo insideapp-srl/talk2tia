@@ -1,9 +1,11 @@
 // Central links and helpers. Repository: github.com/insideapp-srl/talk2tia
+import { latest } from './release';
+
 export const links = {
   repo: 'https://github.com/insideapp-srl/talk2tia',
   releases: 'https://github.com/insideapp-srl/talk2tia/releases',
-  // Not /releases/latest: GitHub excludes pre-releases (all 0.x betas) from it.
-  download: 'https://github.com/insideapp-srl/talk2tia/releases',
+  // Direct link to the latest signed MSI (read at build time, see release.ts); the releases page if unavailable.
+  download: latest?.msi.url ?? 'https://github.com/insideapp-srl/talk2tia/releases',
   issues: 'https://github.com/insideapp-srl/talk2tia/issues',
   kofi: 'https://ko-fi.com/insideappsrl',
   insideapp: 'https://www.insideapp.it',
